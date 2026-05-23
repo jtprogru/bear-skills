@@ -1,0 +1,12 @@
+# SRE / Kubernetes домен — скиллы для incident-management, runbooks, диагностики.
+# Не требует env-переменных. Rules/skills/agents едут в ~/.claude/ глобально.
+
+name: sre
+description: SRE — incident postmortem, runbook authoring, Kubernetes triage.
+
+requires_env: []
+
+targets:
+  rules:  ${CLAUDE_HOME}/rules
+  skills: ${CLAUDE_HOME}/skills
+  agents: ${CLAUDE_HOME}/agents

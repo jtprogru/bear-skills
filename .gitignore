@@ -1,0 +1,15 @@
+.DS_Store
+*.swp
+*.swo
+*~
+
+.serena/
+.idea/
+.vscode/
+
+node_modules/
+npm-debug.log*
+.npm/
+
+# Локальные тестовые workspace, на которые ссылаются evals.json
+*-workspace/

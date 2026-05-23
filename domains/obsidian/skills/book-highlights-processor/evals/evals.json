@@ -1,0 +1,63 @@
+{
+  "skill_name": "book-highlights-processor",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "sre-book-mixed-quotes",
+      "prompt": "Process the book highlights file at /Users/jtprogru/.agents/skills/book-highlights-processor-workspace/test-sre.md — transform 🎯 quotes into Obsidian callouts with titles and ==highlights==. Write the result back to the file.",
+      "expected_output": "Markdown file with all 🎯 quotes converted to > [!quote] callouts, each with a claim-based Russian title and ==highlighted== key phrases, reader ✍️ notes preserved inside callouts, frontmatter unchanged",
+      "assertions": [
+        {
+          "name": "all_quotes_are_callouts",
+          "description": "Every quote is wrapped in > [!quote] format — no raw 🎯 bullets remain"
+        },
+        {
+          "name": "highlights_present_in_every_quote",
+          "description": "Each callout body contains at least one ==highlight=="
+        },
+        {
+          "name": "reader_notes_preserved",
+          "description": "✍️ notes appear inside callouts, not lost"
+        },
+        {
+          "name": "frontmatter_unchanged",
+          "description": "The YAML frontmatter block (book, author, language, tags) is byte-for-byte preserved"
+        },
+        {
+          "name": "titles_are_claim_based",
+          "description": "Callout titles express an insight (contain verb or specific claim), not just a topic noun like 'Exponential backoff' or 'О мониторинге'"
+        }
+      ],
+      "files": ["/Users/jtprogru/.agents/skills/book-highlights-processor-workspace/test-sre.md"]
+    },
+    {
+      "id": 1,
+      "eval_name": "notes-book-philosophical-quotes",
+      "prompt": "Process the book highlights file at /Users/jtprogru/.agents/skills/book-highlights-processor-workspace/test-notes.md — transform 🎯 quotes into Obsidian callouts with titles and ==highlights==. Write the result back to the file.",
+      "expected_output": "Markdown file with all quotes converted to callouts with claim-based Russian titles, ==highlights== on key concepts, ✍️ notes preserved, frontmatter and header section unchanged",
+      "assertions": [
+        {
+          "name": "all_quotes_are_callouts",
+          "description": "Every quote is wrapped in > [!quote] format — no raw 🎯 bullets remain"
+        },
+        {
+          "name": "highlights_present_in_every_quote",
+          "description": "Each callout body contains at least one ==highlight=="
+        },
+        {
+          "name": "reader_notes_preserved",
+          "description": "✍️ notes appear inside callouts, not lost"
+        },
+        {
+          "name": "frontmatter_unchanged",
+          "description": "The YAML frontmatter block is preserved exactly"
+        },
+        {
+          "name": "titles_are_claim_based",
+          "description": "Titles capture a specific insight, not generic topic labels"
+        }
+      ],
+      "files": ["/Users/jtprogru/.agents/skills/book-highlights-processor-workspace/test-notes.md"]
+    }
+  ]
+}

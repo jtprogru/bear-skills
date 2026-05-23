@@ -1,0 +1,52 @@
+{
+  "name": "bear-skills",
+  "version": "0.2.0",
+  "description": "Мульти-доменная коллекция правил, скиллов и агентов для Claude Code: Obsidian PKB, Git workflow, SRE/Kubernetes, контент-pipeline",
+  "bin": {
+    "bear-skills": "./bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "domains/",
+    "docs/",
+    "AGENTS.md",
+    "README.md",
+    "LICENSE",
+    "Makefile"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jtprogru/bear-skills.git"
+  },
+  "homepage": "https://github.com/jtprogru/bear-skills#readme",
+  "bugs": {
+    "url": "https://github.com/jtprogru/bear-skills/issues"
+  },
+  "keywords": [
+    "claude-code",
+    "agents",
+    "skills",
+    "obsidian",
+    "pkb",
+    "para",
+    "second-brain",
+    "knowledge-management",
+    "git",
+    "conventional-commits",
+    "sre",
+    "kubernetes",
+    "incident-management",
+    "runbook",
+    "content",
+    "telegram"
+  ],
+  "author": "Mikhail Savin <jtprogru@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "check": "node bin/cli.js check --source . --no-clone",
+    "status": "node bin/cli.js status --source . --no-clone"
+  }
+}
