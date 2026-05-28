@@ -133,6 +133,7 @@ bear-skills/
 - `content-tg-post` — пост в Telegram (500-1500 символов, тезис первым)
 - `content-article-draft` — драфт статьи (Habr / Medium / личный блог)
 - `content-tutorial-structure` — скелет технического туториала
+- `content-humanizer` — очеловечивание русскоязычного AI-текста (только русский язык)
 
 **Agents:**
 - `content-editor` — редактор контент-pipeline от идеи до публикации

@@ -25,7 +25,7 @@ npx github:jtprogru/bear-skills install
 | **[`obsidian`](docs/domains/obsidian/)** | `BEAR_VAULT` | PKB на Obsidian по PARA — ингест, разбор inbox, untangle hub, ежедневник. **9 правил, 11 скиллов, 5 агентов.** |
 | **[`git`](docs/domains/git/README.md)** | — | Git workflow — Conventional Commits, описания PR, semver-релизы. **1 правило, 3 скилла, 1 агент.** |
 | **[`sre`](docs/domains/sre/README.md)** | — | SRE / Kubernetes — incident postmortem, runbooks, k8s-триаж. **2 правила, 3 скилла, 1 агент.** |
-| **[`content`](docs/domains/content/README.md)** | — | Контент — Telegram-посты, статьи, технические туториалы. **2 правила, 3 скилла, 1 агент.** |
+| **[`content`](docs/domains/content/README.md)** | — | Контент — Telegram-посты, статьи, технические туториалы, очеловечивание текста. **2 правила, 4 скилла, 1 агент.** |
 
 ## Структура репозитория
 
