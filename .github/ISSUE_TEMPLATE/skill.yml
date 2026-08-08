@@ -1,0 +1,35 @@
+name: Идея скилла
+description: Повторяющаяся задача, которую стоит зафиксировать как скилл
+labels: [skill]
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: Какая задача повторяется
+      description: Конкретный сценарий, а не область. «Оформить разбор инцидента» лучше, чем «работа с SRE».
+    validations:
+      required: true
+
+  - type: textarea
+    id: manual
+    attributes:
+      label: Как ты делаешь это сейчас руками
+      description: Шаги, которые скилл должен взять на себя
+    validations:
+      required: true
+
+  - type: input
+    id: domain
+    attributes:
+      label: В какой домен просится
+      placeholder: sre / git / content / obsidian / новый
+    validations:
+      required: false
+
+  - type: textarea
+    id: triggers
+    attributes:
+      label: Какими словами ты бы его звал
+      description: Живые формулировки — из них получится description, по которому модель решает, звать скилл или нет
+    validations:
+      required: false

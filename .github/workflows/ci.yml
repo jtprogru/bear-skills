@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Тесты — Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['18', '20', '22']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Валидация манифестов и фронтматтера
+        run: node bin/cli.js check --source . --no-clone
+
+      - name: Зеркало не разошлось с domains/
+        run: node bin/mirror.js --check
+
+      - name: Тесты
+        run: node --test tests/*.test.js
+
+  install-smoke:
+    name: Установка с чистой машины
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Симлинк-канал: ставим в изолированный CLAUDE_HOME и проверяем,
+      # что домены с невыполненными требованиями скипнулись, а не упали.
+      - name: Симлинк-установка в изолированный HOME
+        run: |
+          node bin/cli.js install --source . --no-clone --claude-home "$RUNNER_TEMP/claude"
+          test -L "$RUNNER_TEMP/claude/skills/git-conventional-commit"
+          test -L "$RUNNER_TEMP/claude/agents/git-flow.md"
+
+      - name: Без BEAR_VAULT домен obsidian пропущен
+        run: |
+          ! test -e "$RUNNER_TEMP/claude/skills/obsidian-ingest"
+
+      - name: Без CLI srekit скиллы srekit* пропущены, остальной sre поставлен
+        run: |
+          ! test -e "$RUNNER_TEMP/claude/skills/srekit"
+          test -L "$RUNNER_TEMP/claude/skills/sre-k8s-triage"
+
+      - name: Снятие симлинков
+        run: |
+          node bin/cli.js uninstall --source . --no-clone --claude-home "$RUNNER_TEMP/claude"
+          ! test -e "$RUNNER_TEMP/claude/skills/git-conventional-commit"
+
+      # Копирующий канал: то же самое, но через bin/install.js.
+      - name: Копирующая установка
+        run: |
+          node bin/install.js --only claude-code --dry-run
+          mkdir -p "$RUNNER_TEMP/fakehome/.claude"
+          HOME="$RUNNER_TEMP/fakehome" node bin/install.js --only claude-code
+          test -f "$RUNNER_TEMP/fakehome/.claude/skills/git-conventional-commit/SKILL.md"
+          test -f "$RUNNER_TEMP/fakehome/.claude/rules/git-conventions.md"
+
+      - name: Копирующая деинсталляция
+        run: |
+          HOME="$RUNNER_TEMP/fakehome" node bin/install.js --only claude-code --uninstall
+          ! test -e "$RUNNER_TEMP/fakehome/.claude/skills/git-conventional-commit"
+
+      - name: install.sh синтаксически валиден
+        run: bash -n install.sh
+
+  lint-json:
+    name: JSON-файлы валидны
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Разбор всех JSON
+        run: |
+          for f in package.json skills-lock.json .claude-plugin/*.json $(find domains -name '*.json'); do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || { echo "битый JSON: $f"; exit 1; }
+            echo "ok: $f"
+          done
