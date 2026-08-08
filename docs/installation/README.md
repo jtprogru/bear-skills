@@ -2,14 +2,20 @@
 
 `bear-skills` устанавливает компоненты четырёх доменов в нужные места — куда именно, объявляет сам домен в своём `manifest.yaml`.
 
-| Домен | requires_env | rules → | skills → | agents → |
-|-------|-------------|---------|----------|----------|
-| `obsidian` | `BEAR_VAULT` | `$BEAR_VAULT/.agents/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
-| `git`, `sre`, `content` | — | `~/.claude/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
+| Домен | требует | rules → | skills → | agents → |
+|-------|---------|---------|----------|----------|
+| `obsidian` | env `BEAR_VAULT` | `$BEAR_VAULT/.agents/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
+| `sre` | bin `srekit` — только для скиллов `srekit*` | `~/.claude/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
+| `git`, `content` | — | `~/.claude/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
 
 Установка работает симлинками: правишь в репо — изменения сразу видны в Claude Code и в Obsidian.
 
-Если у домена не выполнен `requires_env` (например, нет `BEAR_VAULT`) — он скипается с warning, остальные домены ставятся как обычно.
+Требования бывают двух видов и ведут себя по-разному:
+
+- **`requires_env`** — переменная окружения. Не задана (нет `BEAR_VAULT`) — домен скипается целиком с warning, остальные ставятся.
+- **`requires_bin`** — исполняемый файл в `PATH`. Если объявлен на уровне домена, ведёт себя как `requires_env`. Если объявлен под конкретные компоненты — скипаются только они. Нет CLI `srekit` → не поставятся `srekit`, `srekit-postmortem`, `srekit-runbook`, а `sre-k8s-triage`, правила и агент домена поставятся.
+
+Что именно требуется и выполнено ли это, показывает `bear-skills list`.
 
 ## Какой способ установки выбрать
 
@@ -55,6 +61,7 @@ CLI создаёт папку `<vault>/.agents/rules/`, но **сам vault** д
 | `status` | Что и куда развёрнуто, по доменам |
 | `list` | Список всех доменов и компонентов |
 | `check` | Валидация манифестов и фронтматтера |
+| `lock-check` | Сверка `skills-lock.json` с чужими скиллами на диске: изменились ли, не появилось ли неучтённых |
 | `help` | Справка |
 
 ## Флаги
@@ -67,6 +74,7 @@ CLI создаёт папку `<vault>/.agents/rules/`, но **сам vault** д
 | `--source <path>` | `~/.bear-skills` | Локальный source вместо клонирования. Подразумевает `--no-clone` |
 | `--no-clone` | — | Не делать `git clone/pull`, использовать существующий source |
 | `--dry-run` | — | Показать действия, ничего не меняя |
+| `--skills-dir <path>` | из `skills-lock.json` | Каталог чужих скиллов для `lock-check` |
 
 ## Что дальше
 
