@@ -1,0 +1,41 @@
+name: Пересборка зеркала
+
+# Плоские skills/, agents/, rules/ в корне генерируются из domains/ и коммитятся,
+# потому что каналы дистрибуции (плагин Claude Code, npx skills add) ожидают их
+# в репозитории. Этот workflow чинит зеркало, если его забыли пересобрать руками,
+# чтобы CI не блокировал работу из-за механической забывчивости.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'domains/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Пересобрать зеркало
+        run: node bin/mirror.js
+
+      - name: Закоммитить, если что-то изменилось
+        run: |
+          if git diff --quiet -- skills agents rules; then
+            echo "Зеркало и так актуально."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills agents rules
+          git commit -m "chore(mirror): пересобрать плоское зеркало из domains/"
+          git push

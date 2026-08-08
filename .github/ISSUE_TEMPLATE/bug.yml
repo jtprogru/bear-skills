@@ -1,0 +1,44 @@
+name: Проблема
+description: Что-то не ставится, не срабатывает или работает не так
+labels: [bug]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Где проблема
+      options:
+        - Установка (CLI, install.sh, плагин)
+        - Скилл не срабатывает или срабатывает не тот
+        - Скилл срабатывает, но делает не то
+        - Документация
+        - Другое
+    validations:
+      required: true
+
+  - type: input
+    id: component
+    attributes:
+      label: Компонент
+      description: Имя скилла, агента или правила, если проблема в конкретном
+      placeholder: git-monorepo-release
+    validations:
+      required: false
+
+  - type: textarea
+    id: what
+    attributes:
+      label: Что произошло
+      description: Что сделал, что ожидал, что получил
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Окружение
+      description: |
+        Вывод `node -v`, ОС, способ установки (симлинки / плагин / npx skills add).
+        Если проблема с установкой — приложи вывод `bear-skills status`.
+      render: shell
+    validations:
+      required: false

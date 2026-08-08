@@ -1,7 +1,7 @@
 {
   "name": "bear-skills",
-  "version": "0.2.0",
-  "description": "Мульти-доменная коллекция правил, скиллов и агентов для Claude Code: Obsidian PKB, Git workflow, SRE/Kubernetes, контент-pipeline",
+  "version": "0.4.0",
+  "description": "Мульти-доменная коллекция правил, скиллов и агентов для Claude Code: Obsidian PKB, Git workflow, SRE/Kubernetes, контент, гигиена работы с агентом, работа с кодом",
   "bin": {
     "bear-skills": "./bin/cli.js"
   },
@@ -9,10 +9,17 @@
     "bin/",
     "domains/",
     "docs/",
+    "skills/",
+    "agents/",
+    "rules/",
+    "commands/",
+    "hooks/",
+    ".claude-plugin/",
     "AGENTS.md",
     "README.md",
     "LICENSE",
-    "Makefile"
+    "Makefile",
+    "skills-lock.json"
   ],
   "engines": {
     "node": ">=18"
@@ -41,12 +48,28 @@
     "incident-management",
     "runbook",
     "content",
-    "telegram"
+    "telegram",
+    "srekit",
+    "monorepo",
+    "semver",
+    "postmortem",
+    "agentops",
+    "context-engineering",
+    "code-review",
+    "claude-code-plugin"
   ],
   "author": "Mikhail Savin <jtprogru@gmail.com>",
   "license": "MIT",
   "scripts": {
     "check": "node bin/cli.js check --source . --no-clone",
-    "status": "node bin/cli.js status --source . --no-clone"
+    "status": "node bin/cli.js status --source . --no-clone",
+    "lock-check": "node bin/cli.js lock-check --source . --no-clone",
+    "mirror": "node bin/mirror.js",
+    "mirror:check": "node bin/mirror.js --check",
+    "test": "node --test tests/*.test.js",
+    "evals": "node bin/evals.js"
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.60.0"
   }
 }

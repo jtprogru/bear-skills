@@ -20,7 +20,8 @@ description: >
 | **Старт работы** | создать ветку, договориться о scope | (вручную: `git checkout -b feature/...`) |
 | **Каждый логический шаг** | коммит | `git-conventional-commit` |
 | **Перед открытием PR** | описание | `git-pr-description` |
-| **После merge в main** | если это релиз | `git-release-tag` |
+| **После merge в main** | если это релиз одного пакета | `git-release-tag` |
+| **После merge в main** | если в репо несколько версионируемых пакетов | `git-monorepo-release` |
 
 ## Сценарий
 
@@ -65,7 +66,7 @@ git add -p   # интерактивно по hunks
 ```
 git checkout main && git pull --ff-only
 ```
-И вызови **`git-release-tag`**.
+Дальше зависит от репозитория: один версионируемый пакет — **`git-release-tag`**; несколько независимых пакетов или SDK (теги вида `sdk-go/vX.Y.Z`) — **`git-monorepo-release`**, он определит состав релиза и вызовет `git-release-tag` на каждый тег.
 
 Если изменение не релизное (например, внутренний рефакторинг без публичного API) — просто удалить feature-ветку:
 ```

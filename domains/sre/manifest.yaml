@@ -1,10 +1,22 @@
 # SRE / Kubernetes домен — скиллы для incident-management, runbooks, диагностики.
 # Не требует env-переменных. Rules/skills/agents едут в ~/.claude/ глобально.
+#
+# Скиллы srekit-* работают поверх CLI `srekit` (скаффолдит артефакты по шаблонам).
+# Без бинаря в PATH они бесполезны, поэтому объявлены через requires_bin точечно —
+# домен ставится, скипаются только они.
+# Установка CLI: brew install jtprogru/tap/srekit
+#            или go install github.com/jtprogru/srekit@latest
 
 name: sre
-description: SRE — incident postmortem, runbook authoring, Kubernetes triage.
+description: SRE — постмортемы и runbook'и через srekit, Kubernetes triage.
 
 requires_env: []
+
+requires_bin:
+  srekit:
+    - skill:srekit
+    - skill:srekit-postmortem
+    - skill:srekit-runbook
 
 targets:
   rules:  ${CLAUDE_HOME}/rules

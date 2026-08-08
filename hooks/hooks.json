@@ -1,0 +1,15 @@
+{
+  "$comment": "Конфигурация хуков для плагина Claude Code. Хук инжектит общий контракт работы в начале сессии и пишет флаг для statusline. Устанавливать необязательно: скиллы работают и без него.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/bear-activate.js\""
+          }
+        ]
+      }
+    ]
+  }
+}

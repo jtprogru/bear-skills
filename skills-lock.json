@@ -1,0 +1,101 @@
+{
+  "$comment": "Чужие скиллы, установленные в ~/.agents/skills/. В bear-skills они НЕ вендорятся — файл фиксирует, что именно стоит рядом с нашим, откуда взято и под какой лицензией. Хеш — sha256 файла SKILL.md на момент фиксации; расхождение означает, что скилл обновился у источника или правился локально. Проверка: node bin/cli.js lock-check",
+  "version": 1,
+  "generated": "2026-08-07",
+  "location": "~/.agents/skills",
+  "skills": [
+    {
+      "name": "codebase-memory",
+      "source": "unknown",
+      "license": "unknown",
+      "sha256": "182bc7a066c96ead8cfb47c5e3845f0fb11f4107b438a21b7129b268c95d4efe",
+      "files": 1,
+      "note": "Источник не установлен. Скилл-обёртка над MCP-сервером codebase-memory. Уточнить происхождение или удалить."
+    },
+    {
+      "name": "doc-coauthoring",
+      "source": "unknown",
+      "license": "unknown",
+      "sha256": "2e47d78846faeea4a56e9809c52700087a15a2155a3f293a3efbaded81398ef4",
+      "files": 1,
+      "note": "Источник не установлен. Уточнить происхождение или удалить."
+    },
+    {
+      "name": "fact-check",
+      "source": "jwynia",
+      "license": "MIT",
+      "version": "1.0",
+      "sha256": "cea291d6c1f40c6a66071ae86d5fb0baf7d7ee406a26acfb25b2b115f70d6167",
+      "files": 5
+    },
+    {
+      "name": "find-skills",
+      "source": "vercel-labs",
+      "license": "unknown",
+      "sha256": "deddc03b4b5f50755b97fcdb737a786676992ef7e9be614d2cd2c71e0320bebf",
+      "files": 1
+    },
+    {
+      "name": "golang-cli",
+      "source": "https://github.com/samber/cc-skills-golang",
+      "license": "MIT",
+      "version": "1.2.0",
+      "sha256": "518891186ce2d2416e97030fcb5381e81ecadf58d641ef7484aa33d2cacf2c75",
+      "files": 14
+    },
+    {
+      "name": "golang-pro",
+      "source": "https://github.com/Jeffallan",
+      "license": "MIT",
+      "version": "1.1.0",
+      "sha256": "937bafb4bd14906e33420206500a8404a9de14705184ade02c77734221e748d6",
+      "files": 6
+    },
+    {
+      "name": "golang-troubleshooting",
+      "source": "https://github.com/samber/cc-skills-golang",
+      "license": "MIT",
+      "version": "1.2.3",
+      "sha256": "42b2cdacfe75a6bb0c9c15f8b58f6f70cb0ee87ab18cdb2f73ea3b76acb48c76",
+      "files": 12
+    },
+    {
+      "name": "mcp-builder",
+      "source": "Anthropic",
+      "license": "см. LICENSE.txt внутри скилла",
+      "sha256": "0f4592dcb53cf2b5d6b7febee6b4152018b565551a1c29e3c612f57b218ab295",
+      "files": 10
+    },
+    {
+      "name": "pdf",
+      "source": "Anthropic",
+      "license": "Proprietary",
+      "sha256": "9f78b8359fbd4943ad260a7a1e436e5a96503406d6c34e99f69223d647d85b9c",
+      "files": 12,
+      "note": "Проприетарная лицензия. Не копировать, не переписывать по мотивам, не включать в дистрибуцию bear-skills."
+    },
+    {
+      "name": "seo",
+      "source": "affaan-m",
+      "license": "unknown",
+      "sha256": "4b744d2ff5c9313e903e4e5139322cc98adb9f9778a7231d4826216ab0f6873a",
+      "files": 1
+    },
+    {
+      "name": "skill-creator",
+      "source": "Anthropic",
+      "license": "см. LICENSE.txt внутри скилла",
+      "sha256": "dcd4803e61e913e6fc27294184cd3a71f09f5e924ff20c8a9a20173e7b3c2bcf",
+      "files": 27
+    }
+  ],
+  "related": [
+    {
+      "name": "humanizer-ru",
+      "source": "https://github.com/ilyautov/humanizer-ru",
+      "license": "см. LICENSE в репозитории",
+      "location": "~/Work/github/ilyautov/humanizer-ru",
+      "note": "Чужой репозиторий, не наш. Тематически пересекается с content-humanizer, но переносу не подлежит. Идеи можно использовать только с атрибуцией."
+    }
+  ]
+}

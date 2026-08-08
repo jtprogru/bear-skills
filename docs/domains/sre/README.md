@@ -5,6 +5,7 @@ SRE / Kubernetes — incident-management, runbooks, диагностика k8s �
 | Поле | Значение |
 |------|----------|
 | `requires_env` | — |
+| `requires_bin` | `srekit` — только для скиллов `srekit*`, остальной домен ставится без него |
 | `rules` target | `~/.claude/rules/` |
 | `skills` target | `~/.claude/skills/` |
 | `agents` target | `~/.claude/agents/` |
@@ -24,9 +25,12 @@ SRE / Kubernetes — incident-management, runbooks, диагностика k8s �
 
 | Скилл | Что делает | Когда вызывать |
 |-------|------------|----------------|
-| `sre-incident-postmortem` | Blameless-постмортем: timeline, impact, root cause, action items | «написать постмортем», «разобрать инцидент» |
-| `sre-runbook-author` | Создаёт runbook для алерта или сценария — TL;DR, диагностика, митигация | «написать runbook», «инструкцию для дежурного» |
 | `sre-k8s-triage` | Систематическая диагностика Pod/Deployment/Service по симптому | «под падает», «не стартует», «pod в CrashLoopBackOff» |
+| `srekit-postmortem` | Blameless-постмортем через `srekit postmortem`: timeline, impact, root cause, action items | «написать постмортем», «разобрать инцидент» |
+| `srekit-runbook` | Runbook через `srekit runbook` — symptoms, diagnose, mitigate, verify | «написать runbook», «инструкцию для дежурного» |
+| `srekit` | Остальные SRE-артефакты: investigation log, RFC/ADR, SLO, error budget policy, capacity plan, retro, on-call report | «завести ADR», «оформить SLO», «сделать retro» |
+
+Три последних требуют CLI `srekit` в `PATH`. Без него они не устанавливаются, а `sre-k8s-triage`, правила и агент — ставятся как обычно.
 
 ### Агенты
 
@@ -37,6 +41,16 @@ SRE / Kubernetes — incident-management, runbooks, диагностика k8s �
 ```bash
 npx github:jtprogru/bear-skills install sre
 ```
+
+Для скиллов `srekit*` нужен CLI:
+
+```bash
+brew install jtprogru/tap/srekit
+# или
+go install github.com/jtprogru/srekit@latest
+```
+
+Проверить, что домен видит бинарь: `bear-skills list` покажет `✅ bin "srekit"` или `❌`.
 
 ## Принципы
 

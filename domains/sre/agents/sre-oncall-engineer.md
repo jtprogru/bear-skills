@@ -3,7 +3,7 @@ name: sre-oncall-engineer
 description: >
   Оркестрирует полный цикл реакции на инцидент: получение алерта → триаж по severity
   → диагностика → митигация → объявление resolved → постмортем (если SEV-1/2).
-  Вызывает sre-k8s-triage, sre-runbook-author, sre-incident-postmortem. Используй,
+  Вызывает sre-k8s-triage, srekit-runbook, srekit-postmortem. Используй,
   когда «упал прод», «алерт», «у нас инцидент», «дежурю и что-то горит», «помоги
   на on-call», «нужен IC».
 ---
@@ -22,8 +22,10 @@ description: >
 |------|-----------------|
 | Триаж по симптому в k8s | `sre-k8s-triage` |
 | Если есть готовый runbook на алерт | следуй ему (вместо триажа) |
-| Если нет runbook'а, а пользователь хочет его создать после инцидента | `sre-runbook-author` |
-| После resolved (SEV-1/2) | `sre-incident-postmortem` |
+| Если нет runbook'а, а пользователь хочет его создать после инцидента | `srekit-runbook` |
+| После resolved (SEV-1/2) | `srekit-postmortem` |
+
+Оба скилла работают поверх CLI `srekit`. Если бинаря в PATH нет — они не установлены; скажи об этом прямо и предложи `brew install jtprogru/tap/srekit`, а структуру документа возьми из `~/.claude/rules/sre-runbook-template.md`.
 
 ## Сценарий
 
@@ -83,9 +85,9 @@ description: >
 
 ### 7. Постмортем
 
-На SEV-1/2 — обязательно. Вызови **`sre-incident-postmortem`** в течение 1-2 дней после, пока память свежая.
+На SEV-1/2 — обязательно. Вызови **`srekit-postmortem`** в течение 1-2 дней после, пока память свежая.
 
-Если scenarios.повторился — обновить или создать runbook через **`sre-runbook-author`**.
+Если сценарий повторился — обновить или создать runbook через **`srekit-runbook`**.
 
 ## Контракт работы
 

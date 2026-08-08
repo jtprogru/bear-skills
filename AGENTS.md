@@ -45,7 +45,7 @@ bear-skills/
 - все skills → `~/.claude/skills/`
 - все agents → `~/.claude/agents/`
 
-Если у домена не выполнен `requires_env` — он скипается с warning, остальные ставятся.
+Если у домена не выполнен `requires_env` — он скипается с warning, остальные ставятся. То же с `requires_bin`: объявленный на уровне домена бинарь пропускает домен целиком, объявленный под конкретные компоненты — только их. Скиллы `srekit*` без CLI `srekit` в `PATH` не устанавливаются, остальной SRE-домен ставится.
 
 ## Что делать до первого действия
 
@@ -77,9 +77,10 @@ bear-skills/
 ### Когда домен пересекается с другим
 
 Примеры пересечений:
-- **Постмортем (sre)** → попадает в **базу знаний (obsidian)**: пишем по `sre-incident-postmortem`, потом ингестим через `obsidian-ingest`.
+- **Постмортем (sre)** → попадает в **базу знаний (obsidian)**: пишем по `srekit-postmortem`, потом ингестим через `obsidian-ingest`.
 - **Релизные заметки (git-release-tag)** → могут стать **Telegram-постом (content-tg-post)** для канала.
 - **Туториал (content-tutorial-structure)** → может содержать **runbook-логику (sre-runbook-template)**.
+- **Статья (content-article-draft)** → разворачивается в пакет форматов через **`content-zavod`**.
 
 В таких случаях соблюдай правила обоих доменов — они дополняют, не противоречат.
 
@@ -112,7 +113,8 @@ bear-skills/
 **Skills:**
 - `git-conventional-commit` — commit-message по Conventional Commits для текущего diff
 - `git-pr-description` — описание PR из diff ветки против main
-- `git-release-tag` — semver-тег с changelog из коммитов
+- `git-release-tag` — semver-тег с changelog из коммитов (один пакет)
+- `git-monorepo-release` — состав релиза монорепо: кого бампить, какие теги ставить вместе, backport
 
 **Agents:**
 - `git-flow` — оркестратор GitHub Flow (ветка → коммиты → PR → тег)
@@ -120,9 +122,12 @@ bear-skills/
 ### domain: sre
 
 **Skills:**
-- `sre-incident-postmortem` — структурированный blameless-постмортем
-- `sre-runbook-author` — исполняемый runbook для алерта или сценария
 - `sre-k8s-triage` — диагностика Pod/Deployment/Service от симптома к причине
+- `srekit-postmortem` — blameless-постмортем через CLI `srekit`
+- `srekit-runbook` — прескриптивный runbook через CLI `srekit`
+- `srekit` — остальные артефакты: investigation log, RFC/ADR, SLO, error budget, capacity plan, retro
+
+Три `srekit*` требуют бинарь `srekit` в `PATH`. Если его нет — их не будет и в `~/.claude/skills/`; структуру документа бери из правила `sre-runbook-template`.
 
 **Agents:**
 - `sre-oncall-engineer` — оркестратор on-call реакции (алерт → митигация → resolved → постмортем)
@@ -134,9 +139,45 @@ bear-skills/
 - `content-article-draft` — драфт статьи (Habr / Medium / личный блог)
 - `content-tutorial-structure` — скелет технического туториала
 - `content-humanizer` — очеловечивание русскоязычного AI-текста (только русский язык)
+- `content-zavod` — из одного источника пакет контента в 6 файлов (статья, треды, Reels, посты, карусели, план)
 
 **Agents:**
 - `content-editor` — редактор контент-pipeline от идеи до публикации
+
+### domain: agentops
+
+Гигиена работы с агентом: как тратить контекст и токены, а не что делать в предметной области.
+
+**Skills:**
+- `agentops-compress` — сжатие memory-файлов (`CLAUDE.md`, `AGENTS.md`, правила) со скриптовой проверкой сохранности якорей
+- `agentops-canary` — канарейка контекста и протокол выхода при деградации
+- `agentops-delegate` — что делегировать сабагенту, а что делать самому
+- `agentops-brevity` — режим сжатых ответов, три уровня
+
+**Agents:**
+- `bear-locator` (haiku) — read-only поиск позиций в коде, формат `path:line — symbol — note`
+- `bear-surgeon` — правка максимум в двух файлах, терминальные токены отказа
+- `bear-reviewer` (haiku) — находки одной строкой с уровнем серьёзности
+
+Правило `agentops-auto-clarity` описывает, где сокращение выключается. Оно общее для всех сокращающих скиллов, включая `code-review-line`.
+
+### domain: code
+
+**Skills:**
+- `code-grill` — калиброванный допрос плана до реализации, по одному вопросу
+- `code-senior-review` — ревью плана с контекстом проекта и проверкой актуальных практик
+- `code-review-line` — построчные находки к diff
+- `code-last-mile` — достройка экспириенс-слоя через разбор сцены
+
+### domain: bear
+
+**Skills:**
+- `bear-help` — что есть в коллекции
+- `bear-doctor` — почему скилл не срабатывает
+- `bear-new-skill` — создание скилла по шаблону коллекции
+- `bear-stats` — что реально вызывается, а что мертво
+
+Все четыре идут за данными в CLI (`bear-skills list` / `doctor` / `stats`), а не пересказывают состав по памяти: он меняется, и память о нём устаревает молча.
 
 ## Развёртывание
 
@@ -162,7 +203,7 @@ npx github:jtprogru/bear-skills list
 ## Добавление нового домена
 
 1. Создай `domains/<new-domain>/{rules,skills,agents}/`
-2. Создай `domains/<new-domain>/manifest.yaml` с `name`, `description`, `requires_env`, `targets`
+2. Создай `domains/<new-domain>/manifest.yaml` с `name`, `description`, `requires_env`, `targets`; внешний CLI объявляй через `requires_bin` — списком для всего домена или ключом с перечнем компонентов, если он нужен не всем
 3. Добавь rules/skills/agents с префиксом `<new-domain>-` в именах файлов
 4. Прогони `make check` — должно быть зелёным
 5. Закоммить и опубликуй
