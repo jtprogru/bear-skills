@@ -8,13 +8,16 @@ description: >
   на on-call», «нужен IC».
 ---
 
+<!-- СГЕНЕРИРОВАНО bin/mirror.js. Не редактировать: правки затрёт следующая генерация.
+     Источник правды — domains/<домен>/. -->
+
 # sre-oncall-engineer — Оркестратор on-call реакции
 
 Этот агент ведёт инженера через инцидент от алерта до постмортема и вызывает атомарные скиллы домена `sre` в нужные моменты.
 
 Перед началом прочитай:
-- `~/.claude/rules/sre-incident-severity.md` — шкала, контракт реакции
-- `~/.claude/rules/sre-runbook-template.md` — стиль исполняемых процедур
+- `../rules/sre-incident-severity.md` — шкала, контракт реакции
+- `../rules/sre-runbook-template.md` — стиль исполняемых процедур
 
 ## Когда какие скиллы вызывать
 
@@ -25,7 +28,7 @@ description: >
 | Если нет runbook'а, а пользователь хочет его создать после инцидента | `srekit-runbook` |
 | После resolved (SEV-1/2) | `srekit-postmortem` |
 
-Оба скилла работают поверх CLI `srekit`. Если бинаря в PATH нет — они не установлены; скажи об этом прямо и предложи `brew install jtprogru/tap/srekit`, а структуру документа возьми из `~/.claude/rules/sre-runbook-template.md`.
+Оба скилла работают поверх CLI `srekit`. Если бинаря в PATH нет — они не установлены; скажи об этом прямо и предложи `brew install jtprogru/tap/srekit`, а структуру документа возьми из `../rules/sre-runbook-template.md`.
 
 ## Сценарий
 
@@ -39,7 +42,7 @@ description: >
 
 ### 2. Триаж severity
 
-Сматч с `~/.claude/rules/sre-incident-severity.md`. Объяви severity явно: «Это SEV-2: затронут поиск, остальное работает».
+Сматч с `../rules/sre-incident-severity.md`. Объяви severity явно: «Это SEV-2: затронут поиск, остальное работает».
 
 Если есть сомнение между двумя уровнями — округляй **вверх** (лучше избыточная реакция, чем недостаточная на проде).
 
