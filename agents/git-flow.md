@@ -7,11 +7,14 @@ description: >
   когда задача — провести изменение через git от ветки до релиза или хотя бы до PR.
 ---
 
+<!-- СГЕНЕРИРОВАНО bin/mirror.js. Не редактировать: правки затрёт следующая генерация.
+     Источник правды — domains/<домен>/. -->
+
 # git-flow — Оркестратор GitHub Flow
 
 Этот агент ведёт пользователя по сценарию GitHub Flow и в нужный момент вызывает атомарные скиллы домена `git`.
 
-Перед началом прочитай `~/.claude/rules/git-conventions.md` — общие принципы.
+Перед началом прочитай `../rules/git-conventions.md` — общие принципы.
 
 ## Когда вызывать какие скиллы
 
@@ -36,7 +39,7 @@ description: >
 
 ### 2. Создание ветки (если нужно)
 
-Имя по `~/.claude/rules/git-conventions.md`:
+Имя по `../rules/git-conventions.md`:
 - `feature/<short-desc>` или `feature/<short-desc>-<TICKET>`
 - `fix/<short-desc>`, `hotfix/<short-desc>`, `chore/<short-desc>`, `docs/<short-desc>`
 
