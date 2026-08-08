@@ -1,0 +1,35 @@
+{
+  "name": "bear-skills",
+  "owner": {
+    "name": "Mikhail Savin",
+    "email": "jtprogru@gmail.com",
+    "url": "https://github.com/jtprogru"
+  },
+  "metadata": {
+    "description": "Личная коллекция скиллов, правил и агентов для Claude Code",
+    "version": "0.4.0"
+  },
+  "plugins": [
+    {
+      "name": "bear-skills",
+      "source": "./",
+      "description": "Мульти-доменная коллекция: Obsidian PKB, Git workflow, SRE/Kubernetes, контент-pipeline, гигиена работы с агентом",
+      "version": "0.4.0",
+      "author": {
+        "name": "Mikhail Savin",
+        "url": "https://github.com/jtprogru"
+      },
+      "homepage": "https://github.com/jtprogru/bear-skills#readme",
+      "license": "MIT",
+      "category": "productivity",
+      "keywords": [
+        "obsidian",
+        "git",
+        "sre",
+        "kubernetes",
+        "content",
+        "agentops"
+      ]
+    }
+  ]
+}

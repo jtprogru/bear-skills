@@ -1,0 +1,24 @@
+{
+  "name": "bear-skills",
+  "description": "Мульти-доменная коллекция правил, скиллов и агентов: Obsidian PKB, Git workflow, SRE/Kubernetes, контент-pipeline, гигиена работы с агентом",
+  "version": "0.4.0",
+  "author": {
+    "name": "Mikhail Savin",
+    "email": "jtprogru@gmail.com",
+    "url": "https://github.com/jtprogru"
+  },
+  "homepage": "https://github.com/jtprogru/bear-skills#readme",
+  "repository": "https://github.com/jtprogru/bear-skills",
+  "license": "MIT",
+  "keywords": [
+    "obsidian",
+    "pkb",
+    "git",
+    "conventional-commits",
+    "sre",
+    "kubernetes",
+    "runbook",
+    "content",
+    "agentops"
+  ]
+}
