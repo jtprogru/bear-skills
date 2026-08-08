@@ -21,7 +21,7 @@ ifneq ($(VAULT),)
   CLI_OPTS     := $(CLI_OPTS) --vault "$(VAULT)"
 endif
 
-.PHONY: help install uninstall sync status list check install-one uninstall-one
+.PHONY: help install uninstall sync status list check lock-check mirror mirror-check test evals install-one uninstall-one
 
 help:
 	@echo "bear-skills — make targets"
@@ -39,6 +39,13 @@ help:
 	@echo "  list               Список всех доменов и компонентов"
 	@echo "  status             Что развёрнуто и куда (по доменам)"
 	@echo "  check              Валидация манифестов и фронтматтера"
+	@echo "  lock-check         Сверка skills-lock.json с чужими скиллами на диске"
+	@echo ""
+	@echo "Разработка:"
+	@echo "  mirror             Пересобрать плоское зеркало skills/ agents/ rules/"
+	@echo "  mirror-check       Проверить, что зеркало не разошлось с domains/"
+	@echo "  test               Прогнать тесты (node --test)"
+	@echo '  evals              Трёхрукий прогон evals (ARGS="--list" / "--dry-run")'
 	@echo ""
 	@echo "Опциональные переменные:"
 	@echo "  VAULT              Путь к Obsidian vault (или env BEAR_VAULT) — нужен obsidian-домену"
@@ -66,6 +73,21 @@ list:
 
 check:
 	@$(CLI) check --source "$(REPO_ROOT)" --no-clone
+
+lock-check:
+	@$(CLI) lock-check --source "$(REPO_ROOT)" --no-clone
+
+mirror:
+	@node "$(REPO_ROOT)/bin/mirror.js"
+
+mirror-check:
+	@node "$(REPO_ROOT)/bin/mirror.js" --check
+
+test:
+	@node --test "$(REPO_ROOT)"/tests/*.test.js
+
+evals:
+	@node "$(REPO_ROOT)/bin/evals.js" $(ARGS)
 
 install-one:
 	@if [ -z "$(ARGS)" ]; then \
