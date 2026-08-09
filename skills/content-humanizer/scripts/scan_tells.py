@@ -10,12 +10,19 @@
 тэллы обратно в парафразе, и заметить это на глаз тяжело: текст изменился, а
 плотность маркеров осталась. Повторный прогон даёт число, а не ощущение.
 
+Что сканер НЕ умеет: видеть ровный ритм, отсутствие конкретики и эмоциональную
+плоскость. Ритм считает scan_rhythm.py, остальное — только глазами.
+
 Использование:
   scan_tells.py <файл>              отчёт по тэллам
   scan_tells.py <файл> --json       то же машиночитаемо
+  scan_tells.py <файл> --sections   разбивка по секциям (где именно плохо)
   scan_tells.py <до> <после>        сравнение: что ушло, что осталось, что добавилось
 
-Зависимостей нет, Python 3.8+.
+Пороги берутся из baseline.json рядом со скриптом, если он есть. Собрать свой:
+  calibrate.py <каталог-с-текстами>
+
+Зависимостей нет, Python 3.9+. pymorphy3 подхватывается, если установлен.
 """
 
 import json
@@ -23,12 +30,21 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import rutext  # noqa: E402
+
 # ─────────────────────────────────────────────────────────────────────────────
-# Каталог. Каждый тэлл: (код, описание, регекс, вес)
+# Каталог экземплярных тэллов. Каждый: (код, описание, регекс, вес)
 #
-# Вес — насколько сильный сигнал. 3 — почти наверняка машина, 1 — само по себе
-# нормально, подозрительно в скоплении. Ни один тэлл не является приговором:
-# живой автор тоже пишет «важно отметить». Приговор выносит плотность.
+# Сюда попадает то, что подозрительно само по себе: конструкция или штамп,
+# который живой автор употребляет редко и осознанно. Слова, нормальные
+# поодиночке и подозрительные в скоплении, живут ниже, в RATE_TELLS: ловить их
+# поштучно означает топить отчёт в шуме.
+#
+# Вес — сила сигнала. 3 — почти наверняка машина, 2 — тик, который стоит убрать.
+# Ни один тэлл не приговор: живой автор тоже пишет «важно отметить». Приговор
+# выносит плотность, и та лишь показывает, куда смотреть.
 # ─────────────────────────────────────────────────────────────────────────────
 
 TELLS = [
@@ -48,24 +64,20 @@ TELLS = [
     ('B2', 'осуществление действия',
      r'\b(осуществля(?:ет|ют|ется)|производит(?:ся)? (?:анализ|оценка|проверка)|'
      r'выполня(?:ет|ется) (?:функци|роль))', 3),
+    # Только однозначные формы. Множественное число («данные», «данных»)
+    # омонимично существительному и в техническом тексте даёт систематические
+    # ложные срабатывания: «в данных образовалось расхождение» — это про data,
+    # а не канцелярит. Потеря в полноте сознательная, см. references/tells-ru.md.
     ('B3', 'данный вместо этот',
-     r'\b(данн(?:ый|ая|ое|ые|ого|ой|ых|ым))\b', 2),
-    ('B4', 'в рамках/в целях/с целью',
-     r'\b(в рамках|в целях|с целью|в качестве|при помощи)\b', 1),
-    ('B5', 'наличие/отсутствие',
-     r'\b(наличи(?:е|я|ем)|отсутстви(?:е|я|ем))\b', 1),
+     r'\bданн(?:ый|ая|ое|ого|ому|ом|ой|ую)\b', 2),
 
     # C. Маркетинговая лексика
     ('C1', 'мощный-революционный',
      r'\b(мощн(?:ый|ая|ое|ые)|революционн(?:ый|ая|ое)|инновационн(?:ый|ая|ое)|'
      r'уникальн(?:ый|ая|ое)|передов(?:ой|ая|ое)|современн(?:ый|ая|ое) подход)\b', 3),
-    ('C2', 'ключевой-важнейший',
-     r'\b(ключев(?:ой|ая|ое|ые)|важнейш(?:ий|ая|ее)|критически важн)', 2),
     ('C3', 'погружение-мир',
      r'\b(давайте (?:погрузимся|разберёмся|рассмотрим)|погрузимся в|'
      r'в мире (?:технологий|разработки|бизнеса)|в современном мире)\b', 3),
-    ('C4', 'эффективный-оптимальный',
-     r'\b(эффективн(?:ый|ая|ое|ые|о)|оптимальн(?:ый|ая|ое|ые))\b', 1),
 
     # D. Структурные штампы
     ('D2', 'не просто X, а Y',
@@ -77,9 +89,7 @@ TELLS = [
     ('D5', 'дело не в X, а в Y',
      r'\bдело не в [^,.\n]{2,40}, а в\b', 2),
 
-    # E. Ложные диапазоны и псевдоточность
-    ('E1', 'от X до Y (риторическое)',
-     r'\bот [^.\n]{3,40} до [^.\n]{3,40}[,.]', 1),
+    # E. Псевдоточность
     ('E2', 'десятки-сотни-тысячи',
      r'\b(десятки|сотни|тысячи) (?:различных|разных|способов|вариантов|причин)\b', 2),
 
@@ -110,47 +120,109 @@ COMPILED = [(code, desc, re.compile(rx, re.IGNORECASE | re.MULTILINE), w)
 # ─────────────────────────────────────────────────────────────────────────────
 # Агрегатные тэллы: сигналом служит частота, а не сам факт.
 #
-# Длинное тире в русском — законный знак препинания, и ловить каждое означает
-# утопить отчёт в шуме (на живом тексте это давало 21 находку из 23). Тэлл —
-# ненормально высокая плотность. То же с хеджированием: «обычно» и «как правило»
-# нормальны поодиночке и подозрительны в скоплении.
+# «Ключевой», «эффективный», «в качестве», «от X до Y» — нормальные обороты.
+# Один раз это язык, пять раз на страницу — тик. Длинное тире в русском вообще
+# законный знак препинания: ловить каждое означает утопить отчёт в шуме.
 #
-# (код, описание, регекс, порог на 100 слов, вес при превышении)
+# Тире считается ТОЛЬКО в прозе. В буллете «— пояснение» это разделитель списка,
+# в таблице — тоже, и к авторской ремарке отношения не имеет.
+#
+# (код, описание, регекс, порог на 100 слов, вес при превышении, только-проза)
 # ─────────────────────────────────────────────────────────────────────────────
 
 RATE_TELLS = [
-    ('G1', 'плотность длинных тире', r'—', 2.5, 2),
+    ('G1', 'плотность длинных тире', r'—', 3.2, 2, True),
     ('F1', 'скопление хеджирования',
-     r'\b(возможно|вероятно|как правило|обычно|зачастую|порой|скорее всего)\b', 1.8, 2),
+     r'\b(возможно|вероятно|как правило|обычно|зачастую|порой|скорее всего)\b', 1.8, 2, False),
     ('D1', 'однообразные тройные перечисления',
-     r'\b\w+, \w+ и \w+[.,]', 1.2, 1),
+     r'\b\w+, \w+ и \w+[.,]', 1.2, 1, False),
+    ('C2', 'скопление «ключевой-важнейший»',
+     r'\b(ключев(?:ой|ая|ое|ые|ым|ого)|важнейш(?:ий|ая|ее)|критически важн)', 0.4, 2, False),
+    ('C4', 'скопление «эффективный-оптимальный»',
+     r'\b(эффективн(?:ый|ая|ое|ые|о)|оптимальн(?:ый|ая|ое|ые))\b', 0.3, 1, False),
+    ('B4', 'скопление «в рамках/в качестве»',
+     r'\b(в рамках|в целях|с целью|в качестве|при помощи)\b', 0.5, 1, False),
+    ('B5', 'скопление «наличие/отсутствие»',
+     r'\b(наличи(?:е|я|ем)|отсутстви(?:е|я|ем))\b', 0.4, 1, False),
+    ('E1', 'скопление «от X до Y»',
+     r'\bот [^.\n]{3,40} до [^.\n]{3,40}[,.]', 0.5, 1, False),
 ]
 
-RATE_COMPILED = [(code, desc, re.compile(rx, re.IGNORECASE | re.MULTILINE), t, w)
-                 for code, desc, rx, t, w in RATE_TELLS]
+RATE_COMPILED = [(code, desc, re.compile(rx, re.IGNORECASE | re.MULTILINE), t, w, p)
+                 for code, desc, rx, t, w, p in RATE_TELLS]
+
+# Агрегатный тэлл — про скопление, поэтому одного-двух вхождений мало даже при
+# формально превышенном пороге. У автора, который слово почти не употребляет,
+# калиброванный порог уходит в ноль, и без этого минимума любое единичное
+# употребление становилось бы находкой.
+RATE_MIN_HITS = 3
+
+# Пороги вердикта. Значения по умолчанию — грубый ориентир; calibrate.py
+# пересчитывает их по реальному корпусу автора и кладёт в baseline.json.
+DEFAULT_BANDS = [(1.5, 'чисто'), (3.5, 'следы есть, точечная правка'),
+                 (6.0, 'заметно, нужна переработка')]
+WORST_BAND = 'плотно, переписывать целиком'
+
+BASELINE_PATH = Path(__file__).resolve().parent / 'baseline.json'
 
 
-def scan(text):
-    """Возвращает список находок и агрегаты."""
+def load_baseline():
+    if not BASELINE_PATH.is_file():
+        return {}
+    try:
+        return json.loads(BASELINE_PATH.read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return {}
+
+
+BASELINE = load_baseline()
+
+
+def _rate_threshold(code, fallback):
+    return BASELINE.get('rate_thresholds', {}).get(code, fallback)
+
+
+def _bands():
+    raw = BASELINE.get('bands')
+    if not raw:
+        return DEFAULT_BANDS
+    return [(float(limit), label) for limit, label in raw]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Сканирование
+# ─────────────────────────────────────────────────────────────────────────────
+
+def scan(raw_text):
+    """Считает тэллы по очищенному тексту.
+
+    Возвращает находки, плотность и словарь: сколько слов реально
+    проанализировано против того, сколько было в файле.
+    """
+    stripped = rutext.strip_markdown(raw_text)
+    prose = rutext.prose_text(stripped)
+
+    words = rutext.word_count(stripped)
+    prose_words = rutext.word_count(prose)
+
     findings = []
     for code, desc, rx, weight in COMPILED:
-        for m in rx.finditer(text):
-            line = text.count('\n', 0, m.start()) + 1
+        for m in rx.finditer(stripped):
             findings.append({
                 'code': code,
                 'tell': desc,
                 'weight': weight,
-                'line': line,
+                'line': stripped.count('\n', 0, m.start()) + 1,
                 'match': m.group(0).strip()[:80],
             })
 
-    words = len(re.findall(r'\b[а-яёa-z]+\b', text, re.IGNORECASE))
-
-    for code, desc, rx, threshold, weight in RATE_COMPILED:
-        hits = len(rx.findall(text))
-        if not words or not hits:
+    for code, desc, rx, fallback, weight, prose_only in RATE_COMPILED:
+        haystack, base = (prose, prose_words) if prose_only else (stripped, words)
+        hits = len(rx.findall(haystack))
+        if not base or hits < RATE_MIN_HITS:
             continue
-        rate = hits / words * 100
+        rate = hits / base * 100
+        threshold = _rate_threshold(code, fallback)
         if rate > threshold:
             findings.append({
                 'code': code,
@@ -164,6 +236,8 @@ def scan(text):
     score = sum(f['weight'] for f in findings)
     return {
         'words': words,
+        'prose_words': prose_words,
+        'raw_words': rutext.word_count(raw_text),
         'findings': findings,
         'total': len(findings),
         'score': score,
@@ -172,41 +246,93 @@ def scan(text):
     }
 
 
-def verdict(density):
-    """Пороги подобраны на глаз и являются ориентиром, а не измерением.
+def split_sections(raw_text):
+    """Режет текст по заголовкам H2/H3. Возвращает [(заголовок, кусок)]."""
+    lines = raw_text.split('\n')
+    sections = []
+    title = '(вступление)'
+    buf = []
+    for line in lines:
+        if re.match(r'^\s{0,3}#{2,3}\s', line):
+            if buf:
+                sections.append((title, '\n'.join(buf)))
+            title = line.lstrip('# ').strip()
+            buf = []
+        else:
+            buf.append(line)
+    if buf:
+        sections.append((title, '\n'.join(buf)))
+    return sections
 
-    Их назначение — не «доказать», что текст машинный, а показать, куда
+
+def scan_sections(raw_text, min_words=80):
+    """Плотность по секциям: длинная статья не должна прятать плохой раздел.
+
+    Секции короче min_words пропускаются — на них плотность скачет от одной
+    находки и означает не качество текста, а малую выборку.
+    """
+    out = []
+    for title, body in split_sections(raw_text):
+        data = scan(body)
+        if data['words'] < min_words:
+            continue
+        out.append({'title': title, **data})
+    out.sort(key=lambda s: -s['density'])
+    return out
+
+
+def verdict(density):
+    """Ориентир, а не измерение.
+
+    Назначение порогов — не «доказать», что текст машинный, а показать, куда
     смотреть. Финальное решение всегда за человеком, который читает текст.
     """
-    if density < 1.5:
-        return 'чисто'
-    if density < 3.5:
-        return 'следы есть, точечная правка'
-    if density < 6.0:
-        return 'заметно, нужна переработка'
-    return 'плотно, переписывать целиком'
+    for limit, label in _bands():
+        if density < limit:
+            return label
+    return WORST_BAND
 
 
-def report(path, data, as_json):
+# ─────────────────────────────────────────────────────────────────────────────
+# Вывод
+# ─────────────────────────────────────────────────────────────────────────────
+
+def report(path, data, as_json, sections=None):
     if as_json:
-        print(json.dumps({'path': str(path), **data}, ensure_ascii=False, indent=2))
+        payload = {'path': str(path), **data}
+        if sections is not None:
+            payload['sections'] = sections
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
         return
+
+    dropped = data['raw_words'] - data['words']
     print(f'📄 {path}')
-    print(f'   слов: {data["words"]}, находок: {data["total"]}, '
-          f'плотность: {data["density"]} на 100 слов')
-    print(f'   вердикт: {verdict(data["density"])}\n')
+    print(f'   слов: {data["words"]} (из них проза: {data["prose_words"]}; '
+          f'отброшено разметки: {dropped})')
+    print(f'   находок: {data["total"]}, плотность: {data["density"]} на 100 слов')
+    print(f'   вердикт: {verdict(data["density"])}')
+    if not rutext.HAS_MORPH:
+        print('   (pymorphy3 не установлен — часть проверок сужена)')
+    print()
+
     if not data['findings']:
         print('   Тэллов не найдено.')
-        return
-    by_code = {}
-    for f in data['findings']:
-        by_code.setdefault((f['code'], f['tell']), []).append(f)
-    for (code, tell), items in sorted(by_code.items(), key=lambda kv: -len(kv[1])):
-        print(f'   [{code}] {tell} — {len(items)}')
-        for f in items[:3]:
-            print(f'        строка {f["line"]}: {f["match"]}')
-        if len(items) > 3:
-            print(f'        … ещё {len(items) - 3}')
+    else:
+        by_code = {}
+        for f in data['findings']:
+            by_code.setdefault((f['code'], f['tell']), []).append(f)
+        for (code, tell), items in sorted(by_code.items(), key=lambda kv: -len(kv[1])):
+            print(f'   [{code}] {tell} — {len(items)}')
+            for f in items[:3]:
+                where = f'строка {f["line"]}' if f['line'] else 'весь текст'
+                print(f'        {where}: {f["match"]}')
+            if len(items) > 3:
+                print(f'        … ещё {len(items) - 3}')
+
+    if sections:
+        print('\n   Плотность по секциям (худшие сверху):')
+        for s in sections[:5]:
+            print(f'      {s["density"]:5.2f}  {s["words"]:5d} сл.  {s["title"]}')
 
 
 def compare(before_path, after_path):
@@ -236,6 +362,7 @@ def compare(before_path, after_path):
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith('--')]
     as_json = '--json' in sys.argv
+    want_sections = '--sections' in sys.argv
     if not args or '--help' in sys.argv or '-h' in sys.argv:
         print(__doc__)
         return
@@ -246,7 +373,9 @@ def main():
     if not path.is_file():
         print(f'ошибка: не файл: {path}', file=sys.stderr)
         sys.exit(1)
-    report(path, scan(path.read_text(encoding='utf-8')), as_json)
+    raw = path.read_text(encoding='utf-8')
+    sections = scan_sections(raw) if want_sections else None
+    report(path, scan(raw), as_json, sections)
 
 
 if __name__ == '__main__':
