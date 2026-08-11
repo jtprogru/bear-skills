@@ -42,7 +42,7 @@ npx github:jtprogru/bear-skills install
 | **[`obsidian`](docs/domains/obsidian/)** | env `BEAR_VAULT` | PKB на Obsidian по PARA — ингест, разбор inbox, untangle hub, ежедневник. **9 правил, 11 скиллов, 5 агентов.** |
 | **[`git`](docs/domains/git/README.md)** | — | Git workflow — Conventional Commits, описания PR, semver-релизы, релиз монорепо. **1 правило, 4 скилла, 1 агент.** |
 | **[`sre`](docs/domains/sre/README.md)** | bin `srekit` для части скиллов | SRE / Kubernetes — постмортемы и runbook'и через srekit, k8s-триаж. **2 правила, 4 скилла, 1 агент.** |
-| **[`content`](docs/domains/content/README.md)** | — | Контент — Telegram-посты, статьи, туториалы, очеловечивание, контент-завод. **2 правила, 5 скиллов, 1 агент.** |
+| **[`content`](docs/domains/content/README.md)** | — | Контент — Telegram-посты, статьи, туториалы, очеловечивание. **2 правила, 4 скилла, 1 агент.** |
 | **[`agentops`](docs/domains/agentops/README.md)** | — | Гигиена работы с агентом — сжатие memory-файлов, канарейка контекста, делегирование, краткость. **1 правило, 4 скилла, 3 агента.** |
 | **[`code`](docs/domains/code/README.md)** | — | Допрос плана, состязательное ревью, построчные комментарии, последние 20%. **4 скилла.** |
 | **[`bear`](docs/domains/bear/README.md)** | — | Мета — справка по коллекции, диагностика установки, создание скилла, статистика. **4 скилла.** |
