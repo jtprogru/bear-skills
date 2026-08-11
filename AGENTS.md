@@ -80,7 +80,6 @@ bear-skills/
 - **Постмортем (sre)** → попадает в **базу знаний (obsidian)**: пишем по `srekit-postmortem`, потом ингестим через `obsidian-ingest`.
 - **Релизные заметки (git-release-tag)** → могут стать **Telegram-постом (content-tg-post)** для канала.
 - **Туториал (content-tutorial-structure)** → может содержать **runbook-логику (sre-runbook-template)**.
-- **Статья (content-article-draft)** → разворачивается в пакет форматов через **`content-zavod`**.
 
 В таких случаях соблюдай правила обоих доменов — они дополняют, не противоречат.
 
@@ -139,7 +138,6 @@ bear-skills/
 - `content-article-draft` — драфт статьи (Habr / Medium / личный блог)
 - `content-tutorial-structure` — скелет технического туториала
 - `content-humanizer` — очеловечивание русскоязычного AI-текста (только русский язык)
-- `content-zavod` — из одного источника пакет контента в 6 файлов (статья, треды, Reels, посты, карусели, план)
 
 **Agents:**
 - `content-editor` — редактор контент-pipeline от идеи до публикации
