@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-08-11
+
 ### Добавлено
 
 Правило `narrative-structure` в домене `content` — синопсис из пяти вопросов до письма и проверка готового черновика по пирамиде Фрейтага, с типичными провалами дуги и поправкой на формат (длинный разбор, короткая заметка, серия постов). `content-humanizer` ссылается на него, когда перекраивает текст целиком, а не шлифует фразы.
@@ -79,6 +81,7 @@
 
 Первый релиз мульти-доменной архитектуры: 4 домена, 21 скилл, 7 агентов, 14 правил, установка симлинками через `bin/cli.js`.
 
-[Unreleased]: https://github.com/jtprogru/bear-skills/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/jtprogru/bear-skills/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/jtprogru/bear-skills/compare/v0.2.0...v0.5.0
 [0.3.0]: https://github.com/jtprogru/bear-skills/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/jtprogru/bear-skills/releases/tag/v0.2.0

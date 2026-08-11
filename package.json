@@ -1,6 +1,6 @@
 {
   "name": "bear-skills",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Мульти-доменная коллекция правил, скиллов и агентов для Claude Code: Obsidian PKB, Git workflow, SRE/Kubernetes, контент, гигиена работы с агентом, работа с кодом",
   "bin": {
     "bear-skills": "./bin/cli.js"

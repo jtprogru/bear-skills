@@ -7,14 +7,14 @@
   },
   "metadata": {
     "description": "Личная коллекция скиллов, правил и агентов для Claude Code",
-    "version": "0.4.0"
+    "version": "0.5.0"
   },
   "plugins": [
     {
       "name": "bear-skills",
       "source": "./",
       "description": "Мульти-доменная коллекция: Obsidian PKB, Git workflow, SRE/Kubernetes, контент-pipeline, гигиена работы с агентом",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "author": {
         "name": "Mikhail Savin",
         "url": "https://github.com/jtprogru"
