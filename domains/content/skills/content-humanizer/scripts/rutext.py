@@ -60,6 +60,11 @@ _LINK_URL = re.compile(r'\]\([^)\s]*(?:\s+"[^"]*")?\)')
 _BARE_URL = re.compile(r'https?://\S+')
 _INLINE_CODE = re.compile(r'`[^`\n]*`')
 _IMAGE = re.compile(r'!\[[^\]]*\]')
+# Wikilink разворачивается в то, что читатель видит: у [[Файл|подпись]] это
+# подпись, у [[Файл]] — имя файла. Иначе служебная половина ссылки попадает в
+# счёт слов и знаков: имена заметок в Obsidian длинные и часто с тире.
+_WIKILINK_ALIAS = re.compile(r'\[\[[^\]|\n]+\|([^\]\n]+)\]\]')
+_WIKILINK_PLAIN = re.compile(r'\[\[([^\]|\n]+)\]\]')
 
 
 def _blank_out(match: re.Match) -> str:
@@ -77,6 +82,8 @@ def strip_markdown(text: str) -> str:
     text = _HTML_COMMENT.sub(_blank_out, text)
     text = _FOOTNOTE_DEF.sub('', text)
     text = _IMAGE.sub(']', text)
+    text = _WIKILINK_ALIAS.sub(r'\1', text)
+    text = _WIKILINK_PLAIN.sub(r'\1', text)
     text = _LINK_URL.sub(']', text)
     text = _BARE_URL.sub('', text)
     text = _INLINE_CODE.sub('', text)
