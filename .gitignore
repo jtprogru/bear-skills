@@ -11,5 +11,10 @@ node_modules/
 npm-debug.log*
 .npm/
 
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
 # Локальные тестовые workspace, на которые ссылаются evals.json
 *-workspace/

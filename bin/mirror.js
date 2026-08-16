@@ -126,6 +126,11 @@ function transform(text, depth) {
 
 const TEXT_EXT = new Set(['.md', '.txt', '.json', '.yaml', '.yml']);
 
+// Мусор ОС и интерпретаторов: в domains/ появляется от запуска скриптов,
+// источником правды не является и в зеркало не попадает.
+const JUNK_NAMES = new Set(['.DS_Store', '__pycache__', '.pytest_cache', '.ruff_cache']);
+const isJunk = (entry) => JUNK_NAMES.has(entry.name) || entry.name.endsWith('.pyc');
+
 // Собирает желаемое содержимое зеркала как Map относительный-путь → содержимое.
 function buildDesired(collected) {
   const files = new Map();
@@ -133,7 +138,7 @@ function buildDesired(collected) {
   const addTree = (srcDir, dstPrefix, baseDepth) => {
     const walk = (dir, rel) => {
       for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        if (entry.name === '.DS_Store') continue;
+        if (isJunk(entry)) continue;
         const abs = path.join(dir, entry.name);
         const relPath = rel ? path.join(rel, entry.name) : entry.name;
         if (entry.isDirectory()) {
@@ -184,7 +189,7 @@ function listMirrorOnDisk() {
     if (!fs.existsSync(base)) continue;
     const walk = (dir) => {
       for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        if (entry.name === '.DS_Store') continue;
+        if (isJunk(entry)) continue;
         const abs = path.join(dir, entry.name);
         if (entry.isDirectory()) walk(abs);
         else found.set(path.relative(REPO_ROOT, abs), fs.readFileSync(abs));
