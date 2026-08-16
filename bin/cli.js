@@ -896,12 +896,16 @@ function cmdCheck(args) {
 
 // Сверяет skills-lock.json с тем, что реально лежит в ~/.agents/skills.
 // Чужие скиллы не вендорятся — файл фиксирует, что не наше и откуда взято.
+// Сам файл локальный и в git не хранится: хеши и location описывают машину.
 function cmdLockCheck(args) {
   const source = resolveSource(args);
   const lockPath = path.join(source, 'skills-lock.json');
   if (!fs.existsSync(lockPath)) {
-    console.error(`Нет ${lockPath}`);
-    process.exit(1);
+    console.log(`Нет ${lockPath} — сверять не с чем.`);
+    console.log('Файл локальный, в репозитории его нет. Заведи вручную:');
+    console.log('  {"version":1,"location":"~/.agents/skills","skills":[]}');
+    console.log('и добавь записи вида {"name","source","license","sha256","files"}.');
+    return;
   }
   const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
   const base = args.flags['skills-dir']

@@ -18,8 +18,7 @@
     "AGENTS.md",
     "README.md",
     "LICENSE",
-    "Makefile",
-    "skills-lock.json"
+    "Makefile"
   ],
   "engines": {
     "node": ">=18"

@@ -89,7 +89,7 @@ jobs:
           node-version: '20'
       - name: Разбор всех JSON
         run: |
-          for f in package.json skills-lock.json .claude-plugin/*.json $(find domains -name '*.json'); do
+          for f in package.json .claude-plugin/*.json $(find domains -name '*.json'); do
             node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || { echo "битый JSON: $f"; exit 1; }
             echo "ok: $f"
           done

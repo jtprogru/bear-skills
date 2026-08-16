@@ -18,3 +18,7 @@ __pycache__/
 
 # Локальные тестовые workspace, на которые ссылаются evals.json
 *-workspace/
+
+# Опись чужих скиллов рядом с нашими. Хеши и location описывают конкретную
+# машину, а не репозиторий, — файл локальный, для `bear-skills lock-check`.
+skills-lock.json

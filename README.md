@@ -72,7 +72,6 @@ bear-skills/
 ├── tests/                  # node --test
 ├── docs/                   # Документация для человека → docs/README.md
 ├── AGENTS.md               # Точка входа для AI-агента
-├── skills-lock.json        # Чужие скиллы рядом с нашими: источник, лицензия, хеш
 ├── install.sh
 ├── LICENSE
 ├── package.json
@@ -112,7 +111,7 @@ bear-skills sync            # git pull + relink
 bear-skills status          # что развёрнуто, по доменам
 bear-skills list            # дерево домен → компоненты
 bear-skills check           # валидация манифестов и фронтматтера
-bear-skills lock-check      # сверка skills-lock.json с чужими скиллами на диске
+bear-skills lock-check      # сверка локального skills-lock.json с чужими скиллами на диске
 bear-skills doctor          # диагностика: битые симлинки, дубли, пересечения триггеров
 bear-skills stats           # какие скиллы реально срабатывают (по логам сессий)
 ```

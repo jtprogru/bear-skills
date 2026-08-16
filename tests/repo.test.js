@@ -111,9 +111,13 @@ test('зеркало совпадает с domains/', () => {
   assert.match(res, /Зеркало актуально/);
 });
 
-test('skills-lock.json валиден и содержит обязательные поля', () => {
-  const lockPath = path.join(REPO_ROOT, 'skills-lock.json');
-  const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+// skills-lock.json — локальный файл, в git его нет (см. .gitignore).
+// Проверяем, только если он есть на этой машине.
+const LOCK_PATH = path.join(REPO_ROOT, 'skills-lock.json');
+const noLock = !fs.existsSync(LOCK_PATH);
+
+test('skills-lock.json валиден и содержит обязательные поля', { skip: noLock }, () => {
+  const lock = JSON.parse(fs.readFileSync(LOCK_PATH, 'utf8'));
   assert.ok(Array.isArray(lock.skills), 'skills не массив');
   for (const s of lock.skills) {
     assert.ok(s.name, 'запись без name');
@@ -122,10 +126,8 @@ test('skills-lock.json валиден и содержит обязательны
   }
 });
 
-test('в lock нет скиллов, которые уже перенесены в domains/', () => {
-  const lock = JSON.parse(
-    fs.readFileSync(path.join(REPO_ROOT, 'skills-lock.json'), 'utf8'),
-  );
+test('в lock нет скиллов, которые уже перенесены в domains/', { skip: noLock }, () => {
+  const lock = JSON.parse(fs.readFileSync(LOCK_PATH, 'utf8'));
   const ours = new Set();
   for (const d of domains) {
     for (const n of listDomainComponents(d).skills) ours.add(n);
