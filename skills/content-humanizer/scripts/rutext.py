@@ -130,6 +130,33 @@ def prose_text(text: str) -> str:
     return '\n'.join(prose_lines(text))
 
 
+def prose_segments(text: str) -> list[str]:
+    """Куски прозы, разделённые непрозаическим содержимым.
+
+    prose_text склеивает всё в один поток, и метрика, которая смотрит на
+    соседство предложений, считает соседями фразы, между которыми в тексте
+    стоял заголовок, список или таблица. Читатель такого соседства не видит:
+    между ними у него полстраницы структуры.
+
+    Пустая строка кусок не разрывает — соседние абзацы читаются подряд, и
+    ровный ритм через их границу настоящий.
+    """
+    segments: list[str] = []
+    buf: list[str] = []
+    for line in text.split('\n'):
+        kind = classify(line)
+        if kind == PROSE:
+            buf.append(line)
+        elif kind == BLANK:
+            continue
+        elif buf:
+            segments.append('\n'.join(buf))
+            buf = []
+    if buf:
+        segments.append('\n'.join(buf))
+    return segments
+
+
 def prose_blocks(text: str) -> str:
     """То же, но с сохранением разбиения на абзацы.
 
