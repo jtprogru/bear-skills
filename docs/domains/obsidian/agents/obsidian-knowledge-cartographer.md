@@ -1,4 +1,4 @@
-# Agent: `knowledge-cartographer`
+# Agent: `obsidian-knowledge-cartographer`
 
 Специализированный агент по здоровью графа знаний: MOC, hub-узлы, split больших заметок, навигация по PARA.
 
@@ -31,8 +31,8 @@
 | Перегруженный hub | `obsidian-untangle-knot` |
 | Большая заметка с несколькими темами | `obsidian-split-note` |
 | Лекция как частный случай | `obsidian-refactor-lecture` |
-| Создать или обновить MOC | Вручную по `rules/knowledge-structures.md` |
-| Синтез-заметка | Вручную по тому же правилу |
+| Создать или обновить MOC | Вручную по навыку `knowledge-structures` |
+| Синтез-заметка | Вручную по тому же навыку |
 
 ## Когда передаёт другому агенту
 
@@ -44,25 +44,25 @@
 
 ## Зависимости
 
-**Скиллы:** `obsidian-untangle-knot`, `obsidian-split-note`, опционально `obsidian-refactor-lecture`
+**Скиллы:** `obsidian-untangle-knot`, `obsidian-split-note`, `knowledge-structures`, `note-templates`, `vault-mermaid`, опционально `obsidian-refactor-lecture`
 
-**Правила:** `vault-struct`, `knowledge-structures`, `note-types-frontmatter`, `file-naming`, `tags`, `workflows`, `mermaid`
+**Правила:** `vault-struct`, `note-types-frontmatter`, `file-naming`, `tags`, `workflows`
 
 ## Точечная установка
 
 ```bash
 bear-skills install \
-  knowledge-cartographer \
-  obsidian-untangle-knot obsidian-split-note \
-  vault-struct knowledge-structures note-types-frontmatter \
-  file-naming tags workflows mermaid
+  agent:obsidian-knowledge-cartographer \
+  skill:obsidian-untangle-knot skill:obsidian-split-note \
+  skill:knowledge-structures skill:note-templates skill:vault-mermaid \
+  rule:vault-struct rule:note-types-frontmatter rule:file-naming rule:tags rule:workflows
 ```
 
 ## Источник
 
-[`agents/knowledge-cartographer.md`](../../agents/knowledge-cartographer.md)
+[`domains/obsidian/agents/obsidian-knowledge-cartographer.md`](../../../../domains/obsidian/agents/obsidian-knowledge-cartographer.md)
 
 ## См. также
 
 - [Обзор агентов](README.md)
-- [Точечная установка](../installation/partial.md)
+- [Точечная установка](../../../installation/partial.md)

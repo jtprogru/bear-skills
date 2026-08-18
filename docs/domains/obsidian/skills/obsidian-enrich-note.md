@@ -34,14 +34,14 @@
 ## Точечная установка
 
 ```bash
-bear-skills install obsidian-enrich-note content-style vault-struct note-types-frontmatter
+bear-skills install skill:obsidian-enrich-note rule:content-style rule:vault-struct rule:note-types-frontmatter
 ```
 
 ## Источник
 
-[`skills/obsidian-enrich-note/SKILL.md`](../../skills/obsidian-enrich-note/SKILL.md)
+[`domains/obsidian/skills/obsidian-enrich-note/SKILL.md`](../../../../domains/obsidian/skills/obsidian-enrich-note/SKILL.md)
 
 ## См. также
 
-- [`note-doctor`](../agents/note-doctor.md) — оркестратор для работы с одной заметкой
+- [`obsidian-note-doctor`](../agents/obsidian-note-doctor.md) — оркестратор для работы с одной заметкой
 - [`obsidian-refactor-inbox`](obsidian-refactor-inbox.md) — если нужно ещё и переместить

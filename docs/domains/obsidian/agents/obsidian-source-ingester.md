@@ -1,4 +1,4 @@
-# Agent: `source-ingester`
+# Agent: `obsidian-source-ingester`
 
 Специализированный агент по ингесту внешних источников: статья, книга, видео, доклад, транскрипт, конспект лекции, экспорт цитат.
 
@@ -42,25 +42,26 @@
 
 ## Зависимости
 
-**Скиллы:** `obsidian-ingest`, `book-highlights-processor`, `obsidian-refactor-lecture`
+**Скиллы:** `obsidian-ingest`, `book-highlights-processor`, `obsidian-refactor-lecture`, `knowledge-structures`, `note-templates`, `vault-mermaid`
 
-**Правила:** `vault-struct`, `note-types-frontmatter`, `knowledge-structures`, `file-naming`, `content-style`, `tags`, `workflows`, `mermaid`
+**Правила:** `vault-struct`, `note-types-frontmatter`, `file-naming`, `content-style`, `tags`, `workflows`, `note-density`
 
 ## Точечная установка
 
 ```bash
 bear-skills install \
-  source-ingester \
-  obsidian-ingest book-highlights-processor obsidian-refactor-lecture \
-  vault-struct note-types-frontmatter knowledge-structures \
-  file-naming content-style tags workflows mermaid
+  agent:obsidian-source-ingester \
+  skill:obsidian-ingest skill:book-highlights-processor skill:obsidian-refactor-lecture \
+  skill:knowledge-structures skill:note-templates skill:vault-mermaid \
+  rule:vault-struct rule:note-types-frontmatter rule:file-naming \
+  rule:content-style rule:tags rule:workflows rule:note-density
 ```
 
 ## Источник
 
-[`agents/source-ingester.md`](../../agents/source-ingester.md)
+[`domains/obsidian/agents/obsidian-source-ingester.md`](../../../../domains/obsidian/agents/obsidian-source-ingester.md)
 
 ## См. также
 
 - [Обзор агентов](README.md)
-- [Точечная установка](../installation/partial.md)
+- [Точечная установка](../../../installation/partial.md)

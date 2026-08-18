@@ -1,4 +1,4 @@
-# Agent: `journal-keeper`
+# Agent: `obsidian-journal-keeper`
 
 Специализированный агент по дневнику: добавление записей в сегодняшнюю заметку и периодические обзоры (неделя/месяц/год).
 
@@ -38,24 +38,25 @@
 
 ## Зависимости
 
-**Скиллы:** `obsidian-daily-append`, `obsidian-journal-review`
+**Скиллы:** `obsidian-daily-append`, `obsidian-emotion-log`, `obsidian-journal-review`, `note-templates`
 
-**Правила:** `vault-struct`, `note-types-frontmatter`, `tags`, `template-usage`, `content-style`
+**Правила:** `vault-struct`, `note-types-frontmatter`, `tags`, `content-style`
 
 ## Точечная установка
 
 ```bash
 bear-skills install \
-  journal-keeper \
-  obsidian-daily-append obsidian-journal-review \
-  vault-struct note-types-frontmatter tags template-usage content-style
+  agent:obsidian-journal-keeper \
+  skill:obsidian-daily-append skill:obsidian-emotion-log skill:obsidian-journal-review \
+  skill:note-templates \
+  rule:vault-struct rule:note-types-frontmatter rule:tags rule:content-style
 ```
 
 ## Источник
 
-[`agents/journal-keeper.md`](../../agents/journal-keeper.md)
+[`domains/obsidian/agents/obsidian-journal-keeper.md`](../../../../domains/obsidian/agents/obsidian-journal-keeper.md)
 
 ## См. также
 
 - [Обзор агентов](README.md)
-- [Точечная установка](../installation/partial.md)
+- [Точечная установка](../../../installation/partial.md)

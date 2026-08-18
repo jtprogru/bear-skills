@@ -35,15 +35,15 @@
 ## Точечная установка
 
 ```bash
-bear-skills install obsidian-refactor-inbox vault-struct tags note-types-frontmatter content-style workflows
+bear-skills install skill:obsidian-refactor-inbox rule:vault-struct rule:tags rule:note-types-frontmatter rule:content-style rule:workflows
 ```
 
 ## Источник
 
-[`skills/obsidian-refactor-inbox/SKILL.md`](../../skills/obsidian-refactor-inbox/SKILL.md)
+[`domains/obsidian/skills/obsidian-refactor-inbox/SKILL.md`](../../../../domains/obsidian/skills/obsidian-refactor-inbox/SKILL.md)
 
 ## См. также
 
 - [`obsidian-inbox-review`](obsidian-inbox-review.md) — предварительный осмотр
 - [`obsidian-enrich-note`](obsidian-enrich-note.md) — точечное обогащение
-- [`inbox-triager`](../agents/inbox-triager.md)
+- [`obsidian-inbox-triager`](../agents/obsidian-inbox-triager.md)

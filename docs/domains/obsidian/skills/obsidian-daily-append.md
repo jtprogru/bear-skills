@@ -36,21 +36,24 @@
 - [`vault-struct`](../rules/vault-struct.md) — папка `05. Дневник/`
 - [`note-types-frontmatter`](../rules/note-types-frontmatter.md) — шаблон ежедневной
 - [`tags`](../rules/tags.md) — `#journal/daily`
-- [`template-usage`](../rules/template-usage.md)
 - [`content-style`](../rules/content-style.md)
+
+**Навыки:**
+
+- [`note-templates`](note-templates.md) — шаблон ежедневной и рецепт вызова Templater
 
 ## Точечная установка
 
 ```bash
-bear-skills install obsidian-daily-append \
-  vault-struct note-types-frontmatter tags template-usage content-style
+bear-skills install skill:obsidian-daily-append skill:note-templates \
+  rule:vault-struct rule:note-types-frontmatter rule:tags rule:content-style
 ```
 
 ## Источник
 
-[`skills/obsidian-daily-append/SKILL.md`](../../skills/obsidian-daily-append/SKILL.md)
+[`domains/obsidian/skills/obsidian-daily-append/SKILL.md`](../../../../domains/obsidian/skills/obsidian-daily-append/SKILL.md)
 
 ## См. также
 
 - [`obsidian-journal-review`](obsidian-journal-review.md) — обзоры периода
-- [`journal-keeper`](../agents/journal-keeper.md) — агент-оркестратор
+- [`obsidian-journal-keeper`](../agents/obsidian-journal-keeper.md) — агент-оркестратор

@@ -47,15 +47,15 @@ ls -la "$BEAR_VAULT"
 ## ❌ «Имя X неоднозначно»
 
 ```
-❌ Имя "tags" неоднозначно (skills, rules). Уточни префиксом, например skill:tags.
+❌ Имя "foo" неоднозначно (skills, rules). Уточни префиксом, например skill:foo.
 ```
 
-**Причина:** есть скилл и правило с одинаковым именем (на практике маловероятно, но возможно).
+**Причина:** есть скилл и правило с одинаковым именем. Сейчас таких коллизий в репозитории нет (это проверяет `make check`), но при добавлении своих компонентов они возможны.
 
 **Решение:** добавь префикс типа:
 
 ```bash
-bear-skills install rule:tags
+bear-skills install rule:foo
 ```
 
 ## ❌ `git clone` падает в `~/.bear-skills/` — там что-то лежит, но не git-репо
@@ -158,8 +158,8 @@ git stash pop
 
 ```bash
 cd ~/.bear-skills && git pull
-bear-skills uninstall obsidian-ingest
-bear-skills install obsidian-ingest
+bear-skills uninstall skill:obsidian-ingest
+bear-skills install skill:obsidian-ingest
 ```
 
 ## Что-то ещё пошло не так

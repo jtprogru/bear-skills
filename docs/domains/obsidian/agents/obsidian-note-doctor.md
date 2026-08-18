@@ -1,4 +1,4 @@
-# Agent: `note-doctor`
+# Agent: `obsidian-note-doctor`
 
 Специализированный агент для работы с одной конкретной заметкой: обогащение frontmatter, критика, поиск противоречий, peer review.
 
@@ -50,16 +50,16 @@
 
 ```bash
 bear-skills install \
-  note-doctor \
-  obsidian-enrich-note obsidian-note-critic \
-  content-style note-types-frontmatter vault-struct workflows tags
+  agent:obsidian-note-doctor \
+  skill:obsidian-enrich-note skill:obsidian-note-critic \
+  rule:content-style rule:note-types-frontmatter rule:vault-struct rule:workflows rule:tags
 ```
 
 ## Источник
 
-[`agents/note-doctor.md`](../../agents/note-doctor.md)
+[`domains/obsidian/agents/obsidian-note-doctor.md`](../../../../domains/obsidian/agents/obsidian-note-doctor.md)
 
 ## См. также
 
 - [Обзор агентов](README.md)
-- [Точечная установка](../installation/partial.md)
+- [Точечная установка](../../../installation/partial.md)

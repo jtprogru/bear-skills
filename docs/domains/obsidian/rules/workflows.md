@@ -14,7 +14,9 @@
   - Средний (предложить): разбиение, MOC, перемещение между PARA, переименование
   - Тяжёлый (только явный запрос): массовое переименование тегов, удаление
 - **Структурирование «грязной» заметки:** организуй → суммаризируй → выдели вопросы → выдели действия → атомарки → связи → противоречия
-- **Обработка inbox:** определи тип → frontmatter → правильная папка PARA → связи → убери `#inbox/review`
+- **Новые заметки рождаются во входящих:** агент создаёт заметку в `00. Входящие/` с `#review` и сразу финальным структурным тегом — тег помечает маршрут, а перенос делает разбор инбокса
+- **Обработка inbox:** определи тип → frontmatter → правильная папка PARA → связи → сними `#review`
+- **Архивирование:** заметки не удаляются, устаревшее переезжает в `04. Архив/` с тегом `#archive` — плоско, без подпапок (полное правило — навык [`vault-archiving`](../skills/vault-archiving.md))
 - **Ингест внешнего источника:** прочитай → литературная заметка → концепты → существующие → связи → confidence → MOC → противоречия
 - **Создание/обновление MOC, синтеза, проекта**
 - **Query → File-back:** сохранение развёрнутого ответа Claude в заметку
@@ -24,7 +26,7 @@
 
 Все скиллы, делающие пачку изменений:
 
-- `obsidian-ingest`, `obsidian-split-note`, `obsidian-refactor-lecture`, `obsidian-refactor-inbox`, `obsidian-untangle-knot`, `obsidian-note-critic`
+- `obsidian-ingest`, `obsidian-split-note`, `obsidian-refactor-lecture`, `obsidian-refactor-inbox`, `obsidian-untangle-knot`, `obsidian-note-critic`, `obsidian-add-summary`, `vault-archiving`
 
 И все агенты — протокол план → подтверждение → действие зашит в их алгоритм работы.
 
@@ -36,5 +38,5 @@ bear-skills install rule:workflows
 
 ## См. также
 
-- Исходник: [`rules/workflows.md`](../../rules/workflows.md)
+- Исходник: [`domains/obsidian/rules/workflows.md`](../../../../domains/obsidian/rules/workflows.md)
 - [Обзор правил](README.md)

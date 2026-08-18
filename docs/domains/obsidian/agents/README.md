@@ -8,11 +8,11 @@
 
 | Агент | Вертикаль | Какие скиллы оркестрирует |
 |-------|-----------|--------------------------|
-| [`inbox-triager`](inbox-triager.md) | Разбор `00. Входящие/` | `obsidian-inbox-review`, `obsidian-refactor-inbox`, `obsidian-enrich-note` |
-| [`source-ingester`](source-ingester.md) | Внешние источники → база | `obsidian-ingest`, `book-highlights-processor`, `obsidian-refactor-lecture` |
-| [`knowledge-cartographer`](knowledge-cartographer.md) | Здоровье графа: MOC, hub, split | `obsidian-untangle-knot`, `obsidian-split-note` |
-| [`note-doctor`](note-doctor.md) | Качество одной заметки | `obsidian-enrich-note`, `obsidian-note-critic` |
-| [`journal-keeper`](journal-keeper.md) | Дневник | `obsidian-daily-append`, `obsidian-journal-review` |
+| [`obsidian-inbox-triager`](obsidian-inbox-triager.md) | Разбор `00. Входящие/` | `obsidian-inbox-review`, `obsidian-refactor-inbox`, `obsidian-enrich-note` |
+| [`obsidian-source-ingester`](obsidian-source-ingester.md) | Внешние источники → база | `obsidian-ingest`, `book-highlights-processor`, `obsidian-refactor-lecture` |
+| [`obsidian-knowledge-cartographer`](obsidian-knowledge-cartographer.md) | Здоровье графа: MOC, hub, split | `obsidian-untangle-knot`, `obsidian-split-note` |
+| [`obsidian-note-doctor`](obsidian-note-doctor.md) | Качество одной заметки | `obsidian-enrich-note`, `obsidian-note-critic` |
+| [`obsidian-journal-keeper`](obsidian-journal-keeper.md) | Дневник | `obsidian-daily-append`, `obsidian-journal-review` |
 
 ## Зачем агенты, если есть скиллы
 
@@ -32,9 +32,9 @@
 ```bash
 # Только триаж inbox: агент + все его скиллы + правила
 bear-skills install \
-  inbox-triager \
-  obsidian-inbox-review obsidian-refactor-inbox obsidian-enrich-note \
-  vault-struct tags note-types-frontmatter content-style workflows
+  agent:obsidian-inbox-triager \
+  skill:obsidian-inbox-review skill:obsidian-refactor-inbox skill:obsidian-enrich-note \
+  rule:vault-struct rule:tags rule:note-types-frontmatter rule:content-style rule:workflows
 ```
 
 Минимальные правила для каждого агента указаны на его docs-странице.
@@ -44,13 +44,13 @@ bear-skills install \
 Claude автоматически выбирает агента по триггерам в `description`. Подскажи ему явно, если хочешь:
 
 ```
-Делегируй это inbox-triager: разбери мой inbox.
-Через source-ingester: положи эту статью в базу.
-Через knowledge-cartographer: распутай [[DevOps]].
+Делегируй это obsidian-inbox-triager: разбери мой inbox.
+Через obsidian-source-ingester: положи эту статью в базу.
+Через obsidian-knowledge-cartographer: распутай [[DevOps]].
 ```
 
 ## См. также
 
 - [Скиллы](../skills/README.md)
 - [Правила](../rules/README.md)
-- [Точечная установка](../installation/partial.md)
+- [Точечная установка](../../../installation/partial.md)

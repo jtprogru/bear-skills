@@ -35,22 +35,25 @@
 - [`tags`](../rules/tags.md) — структурный тег `#lecture` и доменные
 - [`note-types-frontmatter`](../rules/note-types-frontmatter.md)
 - [`file-naming`](../rules/file-naming.md) — паттерн `<Дисциплина> – <Концепт>`
-- [`knowledge-structures`](../rules/knowledge-structures.md) — когда выделять
 - [`workflows`](../rules/workflows.md)
+
+**Навыки:**
+
+- [`knowledge-structures`](knowledge-structures.md) — когда выделять раздел в отдельную заметку
 
 ## Точечная установка
 
 ```bash
-bear-skills install obsidian-refactor-lecture \
-  vault-struct tags note-types-frontmatter \
-  file-naming knowledge-structures workflows
+bear-skills install skill:obsidian-refactor-lecture skill:knowledge-structures \
+  rule:vault-struct rule:tags rule:note-types-frontmatter \
+  rule:file-naming rule:workflows
 ```
 
 ## Источник
 
-[`skills/obsidian-refactor-lecture/SKILL.md`](../../skills/obsidian-refactor-lecture/SKILL.md)
+[`domains/obsidian/skills/obsidian-refactor-lecture/SKILL.md`](../../../../domains/obsidian/skills/obsidian-refactor-lecture/SKILL.md)
 
 ## См. также
 
 - [`obsidian-split-note`](obsidian-split-note.md) — общий случай разбивки
-- [`source-ingester`](../agents/source-ingester.md) — агент-оркестратор для всех видов источников
+- [`obsidian-source-ingester`](../agents/obsidian-source-ingester.md) — агент-оркестратор для всех видов источников

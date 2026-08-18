@@ -32,23 +32,29 @@
 - [`vault-struct`](../rules/vault-struct.md)
 - [`tags`](../rules/tags.md) — структурные теги для маршрутизации
 - [`note-types-frontmatter`](../rules/note-types-frontmatter.md)
-- [`knowledge-structures`](../rules/knowledge-structures.md) — критерии «выделять / оставить»
 - [`file-naming`](../rules/file-naming.md)
 - [`workflows`](../rules/workflows.md)
+- [`note-density`](../rules/note-density.md) — плотность выделяемых атомарок
+
+**Навыки:**
+
+- [`knowledge-structures`](knowledge-structures.md) — критерии «выделять / оставить»
+- [`note-templates`](note-templates.md) — заведение файла через Templater
 
 ## Точечная установка
 
 ```bash
-bear-skills install obsidian-split-note \
-  vault-struct tags note-types-frontmatter \
-  knowledge-structures file-naming workflows
+bear-skills install skill:obsidian-split-note \
+  skill:knowledge-structures skill:note-templates \
+  rule:vault-struct rule:tags rule:note-types-frontmatter \
+  rule:file-naming rule:workflows rule:note-density
 ```
 
 ## Источник
 
-[`skills/obsidian-split-note/SKILL.md`](../../skills/obsidian-split-note/SKILL.md)
+[`domains/obsidian/skills/obsidian-split-note/SKILL.md`](../../../../domains/obsidian/skills/obsidian-split-note/SKILL.md)
 
 ## См. также
 
 - [`obsidian-untangle-knot`](obsidian-untangle-knot.md) — разбивает **связи** (граф), не текст
-- [`knowledge-cartographer`](../agents/knowledge-cartographer.md) — агент-оркестратор графа
+- [`obsidian-knowledge-cartographer`](../agents/obsidian-knowledge-cartographer.md) — агент-оркестратор графа

@@ -11,11 +11,13 @@
 
 Манифест: [`domains/obsidian/manifest.yaml`](../../../domains/obsidian/manifest.yaml).
 
+Точный состав в любой момент — `bear-skills list`.
+
 ## Состав
 
-- **[Правила](rules/README.md)** — 9 правил (структура vault, теги, frontmatter, стиль, шаблоны)
-- **[Скиллы](skills/README.md)** — 11 скиллов (ингест, разбор inbox, untangle hub и др.)
-- **[Агенты](agents/README.md)** — 5 агентов (inbox-triager, source-ingester и др.)
+- **[Правила](rules/README.md)** — 7 правил (структура vault, теги, frontmatter, стиль, именование, плотность)
+- **[Скиллы](skills/README.md)** — 18 скиллов (ингест, разбор inbox, untangle hub, дневник, механика хранилища)
+- **[Агенты](agents/README.md)** — 5 агентов (`obsidian-inbox-triager`, `obsidian-source-ingester` и др.)
 
 ## Установка только этого домена
 

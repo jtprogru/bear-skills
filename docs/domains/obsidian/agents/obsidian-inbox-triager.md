@@ -1,4 +1,4 @@
-# Agent: `inbox-triager`
+# Agent: `obsidian-inbox-triager`
 
 Специализированный агент по обработке inbox (`00. Входящие/`). Полный цикл триажа: осмотр → план → выполнение → отчёт.
 
@@ -16,7 +16,7 @@
 
 - «разбери входящие»
 - «прочисти inbox»
-- «разложи #inbox/review»
+- «разложи #review»
 - «обработай заметки из инбокса»
 
 ## Что оркестрирует
@@ -39,7 +39,7 @@
 
 ## Зависимости
 
-**Скиллы:** `obsidian-inbox-review`, `obsidian-refactor-inbox`, `obsidian-enrich-note`
+**Скиллы:** `obsidian-inbox-review`, `obsidian-refactor-inbox`, `obsidian-enrich-note`, `vault-archiving`
 
 **Правила:** `vault-struct`, `tags`, `note-types-frontmatter`, `workflows`, `content-style`
 
@@ -47,16 +47,17 @@
 
 ```bash
 bear-skills install \
-  inbox-triager \
-  obsidian-inbox-review obsidian-refactor-inbox obsidian-enrich-note \
-  vault-struct tags note-types-frontmatter content-style workflows
+  agent:obsidian-inbox-triager \
+  skill:obsidian-inbox-review skill:obsidian-refactor-inbox skill:obsidian-enrich-note \
+  skill:vault-archiving \
+  rule:vault-struct rule:tags rule:note-types-frontmatter rule:content-style rule:workflows
 ```
 
 ## Источник
 
-[`agents/inbox-triager.md`](../../agents/inbox-triager.md)
+[`domains/obsidian/agents/obsidian-inbox-triager.md`](../../../../domains/obsidian/agents/obsidian-inbox-triager.md)
 
 ## См. также
 
 - [Обзор агентов](README.md)
-- [Точечная установка](../installation/partial.md)
+- [Точечная установка](../../../installation/partial.md)

@@ -1,6 +1,6 @@
 # bear-skills — документация
 
-Пользовательская документация к мульти-доменной коллекции правил, скиллов и агентов для Claude Code. Сейчас в репозитории четыре домена: **Obsidian PKB**, **Git workflow**, **SRE/Kubernetes**, **Контент**.
+Пользовательская документация к мульти-доменной коллекции правил, скиллов и агентов для Claude Code. Сейчас в репозитории семь доменов: **Obsidian PKB**, **Git workflow**, **SRE/Kubernetes**, **Контент**, **AgentOps**, **Код**, **Мета**.
 
 Файлы в `domains/<name>/{rules,skills,agents}/` — это **исходники для AI-агентов**, не пользовательская документация. Эта документация описывает их человекочитаемо.
 
@@ -19,6 +19,11 @@
 - **[`git`](domains/git/README.md)** — Git workflow, релизы
 - **[`sre`](domains/sre/README.md)** — SRE / Kubernetes
 - **[`content`](domains/content/README.md)** — Telegram-посты, статьи, туториалы
+- **[`agentops`](domains/agentops/README.md)** — гигиена работы с агентом: сжатие памяти, делегирование, краткость
+- **[`code`](domains/code/README.md)** — допрос плана, состязательное ревью, последние 20%
+- **[`bear`](domains/bear/README.md)** — мета: справка, диагностика установки, статистика срабатываний
+
+Точный состав любого домена — `bear-skills list`.
 
 ## Архитектура
 
@@ -48,7 +53,7 @@ bear-skills/
 | Домен | rules | skills | agents |
 |-------|-------|--------|--------|
 | `obsidian` | `$BEAR_VAULT/.agents/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
-| `git`, `sre`, `content` | `~/.claude/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
+| остальные домены | `~/.claude/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
 
 Цель развёртывания — симлинки: правишь в репо — изменения сразу видны в Claude Code.
 
@@ -77,7 +82,7 @@ npx github:jtprogru/bear-skills install
 npx github:jtprogru/bear-skills status
 ```
 
-Без `BEAR_VAULT` — поставятся `git`, `sre`, `content`. Obsidian скипнется с warning.
+Без `BEAR_VAULT` — поставится всё, кроме obsidian: он скипнется с warning.
 
 Подробнее: [installation/README.md](installation/README.md).
 
@@ -92,6 +97,9 @@ status      Что развёрнуто, по доменам
 list        Дерево домен → компоненты
 check       Валидация манифестов и фронтматтера
 lock-check  Сверка локального skills-lock.json с чужими скиллами на диске
+doctor      Диагностика установки: битые симлинки, два канала разом,
+            коллизии имён, пересекающиеся триггеры
+stats       Какие скиллы реально срабатывают, а какие мертвы (по логам сессий)
 ```
 
 ## Чужие скиллы рядом с нашими

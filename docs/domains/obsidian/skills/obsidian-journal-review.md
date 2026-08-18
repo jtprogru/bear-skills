@@ -31,21 +31,24 @@
 - [`vault-struct`](../rules/vault-struct.md) — `05. Дневник/`
 - [`tags`](../rules/tags.md) — `#journal/weekly`, `#journal/monthly`
 - [`note-types-frontmatter`](../rules/note-types-frontmatter.md)
-- [`template-usage`](../rules/template-usage.md) — шаблоны еженедельной/ежемесячной/ежегодной
 - [`content-style`](../rules/content-style.md)
+
+**Навыки:**
+
+- [`note-templates`](note-templates.md) — шаблоны еженедельной, ежемесячной и годовой
 
 ## Точечная установка
 
 ```bash
-bear-skills install obsidian-journal-review \
-  vault-struct tags note-types-frontmatter template-usage content-style
+bear-skills install skill:obsidian-journal-review skill:note-templates \
+  rule:vault-struct rule:tags rule:note-types-frontmatter rule:content-style
 ```
 
 ## Источник
 
-[`skills/obsidian-journal-review/SKILL.md`](../../skills/obsidian-journal-review/SKILL.md)
+[`domains/obsidian/skills/obsidian-journal-review/SKILL.md`](../../../../domains/obsidian/skills/obsidian-journal-review/SKILL.md)
 
 ## См. также
 
 - [`obsidian-daily-append`](obsidian-daily-append.md)
-- [`journal-keeper`](../agents/journal-keeper.md)
+- [`obsidian-journal-keeper`](../agents/obsidian-journal-keeper.md)

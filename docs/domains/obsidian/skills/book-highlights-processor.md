@@ -47,12 +47,12 @@
 ## Точечная установка
 
 ```bash
-bear-skills install book-highlights-processor file-naming content-style
+bear-skills install skill:book-highlights-processor rule:file-naming rule:content-style
 ```
 
 ## Источник
 
-[`skills/book-highlights-processor/SKILL.md`](../../skills/book-highlights-processor/SKILL.md)
+[`domains/obsidian/skills/book-highlights-processor/SKILL.md`](../../../../domains/obsidian/skills/book-highlights-processor/SKILL.md)
 
 ## Связанные
 
@@ -60,4 +60,4 @@ bear-skills install book-highlights-processor file-naming content-style
 
 ## См. также
 
-- [`source-ingester`](../agents/source-ingester.md) — агент, объединяющий эти два этапа
+- [`obsidian-source-ingester`](../agents/obsidian-source-ingester.md) — агент, объединяющий эти два этапа

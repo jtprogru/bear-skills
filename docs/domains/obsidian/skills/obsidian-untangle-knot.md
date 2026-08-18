@@ -37,26 +37,31 @@
 **Правила:**
 
 - [`vault-struct`](../rules/vault-struct.md)
-- [`knowledge-structures`](../rules/knowledge-structures.md) — MOC
 - [`note-types-frontmatter`](../rules/note-types-frontmatter.md)
 - [`file-naming`](../rules/file-naming.md)
 - [`tags`](../rules/tags.md)
 - [`workflows`](../rules/workflows.md) — план → подтверждение → действие
-- [`mermaid`](../rules/mermaid.md) — если рисуешь схемы в новых MOC
+
+**Навыки:**
+
+- [`knowledge-structures`](knowledge-structures.md) — структура MOC и под-MOC
+- [`note-templates`](note-templates.md) — заведение под-MOC через Templater
+- [`vault-mermaid`](vault-mermaid.md) — если рисуешь схемы в новых MOC
 
 ## Точечная установка
 
 ```bash
-bear-skills install obsidian-untangle-knot \
-  vault-struct knowledge-structures note-types-frontmatter \
-  file-naming tags workflows mermaid
+bear-skills install skill:obsidian-untangle-knot \
+  skill:knowledge-structures skill:note-templates skill:vault-mermaid \
+  rule:vault-struct rule:note-types-frontmatter \
+  rule:file-naming rule:tags rule:workflows
 ```
 
 ## Источник
 
-[`skills/obsidian-untangle-knot/SKILL.md`](../../skills/obsidian-untangle-knot/SKILL.md)
+[`domains/obsidian/skills/obsidian-untangle-knot/SKILL.md`](../../../../domains/obsidian/skills/obsidian-untangle-knot/SKILL.md)
 
 ## См. также
 
 - [`obsidian-split-note`](obsidian-split-note.md) — разбивает текст, не связи
-- [`knowledge-cartographer`](../agents/knowledge-cartographer.md)
+- [`obsidian-knowledge-cartographer`](../agents/obsidian-knowledge-cartographer.md)

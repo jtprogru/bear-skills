@@ -7,7 +7,8 @@
 - **Стиль текста:** русский язык, личный тон, краткие формулировки, технические термины на английском
 - **Что нельзя:** не переводить названия плагинов и команд, не превращать в Wikipedia, не использовать «вы»
 - **Wikilinks:** правила использования `[[заметка]]`, алиасов `[[заметка\|текст]]`, frontmatter-полей `up`/`down`/`links`/`other`
-- **Markdown:** ATX-заголовки, отступ списков 4 пробела, разрешённые жёсткие табуляции, отключённый лимит длины строки (соответствует `.markdownlint.yaml`)
+- **Markdown:** правила заданы в `.markdownlint.yaml` — правило отсылает к конфигу, а не пересказывает его по памяти
+- **Mermaid:** единственное требование вне конфига — init-строка `useMaxWidth` в начале блока; подробности вынесены в навык [`vault-mermaid`](../skills/vault-mermaid.md)
 
 ## Кто применяет
 
@@ -16,7 +17,7 @@
 - `obsidian-ingest` — формирует литературные и атомарные заметки
 - `obsidian-split-note`, `obsidian-refactor-lecture` — переформулируют контент
 - `obsidian-note-critic` — оценивает текст
-- `obsidian-daily-append` — пишет в дневник
+- `obsidian-daily-append`, `obsidian-emotion-log` — пишут в дневник
 
 ## Точечная установка
 
@@ -30,6 +31,6 @@ bear-skills install rule:content-style
 
 ## См. также
 
-- Исходник: [`rules/content-style.md`](../../rules/content-style.md)
+- Исходник: [`domains/obsidian/rules/content-style.md`](../../../../domains/obsidian/rules/content-style.md)
 - Связанные правила: [`file-naming`](file-naming.md), [`note-types-frontmatter`](note-types-frontmatter.md)
 - [Обзор правил](README.md)

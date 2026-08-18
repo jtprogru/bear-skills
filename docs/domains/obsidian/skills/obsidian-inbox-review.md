@@ -32,14 +32,14 @@
 ## Точечная установка
 
 ```bash
-bear-skills install obsidian-inbox-review vault-struct tags note-types-frontmatter
+bear-skills install skill:obsidian-inbox-review rule:vault-struct rule:tags rule:note-types-frontmatter
 ```
 
 ## Источник
 
-[`skills/obsidian-inbox-review/SKILL.md`](../../skills/obsidian-inbox-review/SKILL.md)
+[`domains/obsidian/skills/obsidian-inbox-review/SKILL.md`](../../../../domains/obsidian/skills/obsidian-inbox-review/SKILL.md)
 
 ## См. также
 
 - [`obsidian-refactor-inbox`](obsidian-refactor-inbox.md) — следующий шаг после ревью
-- [`inbox-triager`](../agents/inbox-triager.md) — агент, оркестрирующий весь inbox-пайплайн
+- [`obsidian-inbox-triager`](../agents/obsidian-inbox-triager.md) — агент, оркестрирующий весь inbox-пайплайн

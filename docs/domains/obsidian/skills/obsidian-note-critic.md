@@ -49,15 +49,15 @@ Peer review одной заметки по четырём осям:
 ## Точечная установка
 
 ```bash
-bear-skills install obsidian-note-critic \
-  content-style note-types-frontmatter vault-struct workflows tags
+bear-skills install skill:obsidian-note-critic \
+  rule:content-style rule:note-types-frontmatter rule:vault-struct rule:workflows rule:tags
 ```
 
 ## Источник
 
-[`skills/obsidian-note-critic/SKILL.md`](../../skills/obsidian-note-critic/SKILL.md)
+[`domains/obsidian/skills/obsidian-note-critic/SKILL.md`](../../../../domains/obsidian/skills/obsidian-note-critic/SKILL.md)
 
 ## См. также
 
 - [`obsidian-enrich-note`](obsidian-enrich-note.md) — точечное обогащение frontmatter
-- [`note-doctor`](../agents/note-doctor.md) — агент, оркестрирующий enrich + critic
+- [`obsidian-note-doctor`](../agents/obsidian-note-doctor.md) — агент, оркестрирующий enrich + critic
