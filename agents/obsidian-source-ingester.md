@@ -27,12 +27,12 @@ description: Специализированный агент по ингесту
 - `AGENTS.md`
 - `rules/vault-struct.md` — куда что класть
 - `rules/note-types-frontmatter.md` — особенно политику «литературные источники в up + sources»
-- `rules/knowledge-structures.md` — атомарные заметки, MOC, синтезы
+- навык `/knowledge-structures` — атомарные заметки, MOC, синтезы
 - `rules/file-naming.md` — claim-based, без запрещённых символов
 - `rules/content-style.md` — язык, тон, wikilinks
 - `rules/tags.md` — таксономия
 - `rules/workflows.md` — раздел «Ингест внешнего источника» и протокол план → подтверждение → действие
-- `rules/mermaid.md` — если в источнике есть схемы
+- навык `/vault-mermaid` — если в источнике есть схемы
 
 ## Чем оркестрирует
 

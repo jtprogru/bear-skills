@@ -26,7 +26,7 @@ description: Специализированный агент по дневник
 - `rules/vault-struct.md` — `05. Дневник/` и его подпапки
 - `rules/note-types-frontmatter.md` — шаблоны `Ежедневная заметка.md`, `Еженедельная заметка.md`, `Ежемесячная заметка.md`, `Ежегодная заметка.md`
 - `rules/tags.md` — `#journal/daily`, `#journal/weekly`, `#journal/monthly`
-- `rules/template-usage.md` — раздел «Журнальные заметки»
+- навык `/note-templates` — раздел «Журнальные заметки»
 - `rules/content-style.md` — тон, «ты» / безличные
 
 ## Чем оркестрирует
