@@ -1,11 +1,6 @@
 ---
 name: sre-k8s-triage
-description: >
-  Систематический алгоритм диагностики проблем в Kubernetes — Pod/Deployment/Service.
-  Ведёт от симптома (CrashLoopBackOff, Pending, 5xx, нет трафика) через kubectl-команды
-  к гипотезе и митигации. Используй, когда пользователь говорит «под падает», «не
-  стартует», «не ходит трафик», «k8s проблема», «помоги разобраться с подом»,
-  «pod в CrashLoopBackOff/ImagePullBackOff/Pending/OOMKilled».
+description: "Систематический алгоритм диагностики проблем в Kubernetes — Pod/Deployment/Service. Ведёт от симптома (CrashLoopBackOff, Pending, 5xx, нет трафика) через kubectl-команды к гипотезе и митигации. Используй, когда пользователь говорит «под падает», «не стартует», «не ходит трафик», «k8s проблема», «помоги разобраться с подом», «pod в CrashLoopBackOff/ImagePullBackOff/Pending/OOMKilled»."
 ---
 
 <!-- СГЕНЕРИРОВАНО bin/mirror.js. Не редактировать: правки затрёт следующая генерация.
@@ -20,6 +15,7 @@ description: >
 ## Шаг 0. Зафиксируй симптом
 
 Спроси:
+
 - ресурс: Pod / Deployment / Service / Ingress
 - namespace, имя
 - статус: `kubectl -n <ns> get <res> <name>` — что показывает
@@ -30,7 +26,7 @@ description: >
 ## Шаг 1. Выбери ветку по симптому
 
 | Симптом / Status | Идти в раздел |
-|------------------|---------------|
+| ------------------ | --------------- |
 | Pod: `Pending` | A. Шедулинг |
 | Pod: `CrashLoopBackOff` | B. Падает на старте |
 | Pod: `ImagePullBackOff` / `ErrImagePull` | C. Образ |
@@ -49,6 +45,7 @@ kubectl -n <ns> describe pod <pod> | tail -20
 ```
 
 Смотри секцию `Events`. Частые причины:
+
 - **`Insufficient cpu/memory`** → нет нод с нужными ресурсами. Решение: понизить `requests`, скейл нод, проверить `kubectl top nodes`.
 - **`0/N nodes are available: ... untolerated taint`** → под не толерирует taint. Решение: добавить `tolerations` или unaint ноду.
 - **`pod has unbound immediate PersistentVolumeClaims`** → PVC не provisioned. Проверить StorageClass, провижионер.
@@ -62,6 +59,7 @@ kubectl -n <ns> describe pod <pod> | grep -A5 'Last State'
 ```
 
 Частые причины:
+
 - **Exit code 1 + ошибка в логах** → ошибка приложения (конфиг, миссинг env-vars, БД недоступна).
 - **Exit code 137** → OOM, см. раздел D.
 - **Exit code 139 (SIGSEGV)** → segfault, скорее всего баг в коде или libc-несовместимость.
@@ -91,6 +89,7 @@ kubectl -n <ns> top pod <pod> --containers
 ### E. Pod Running, не отвечает
 
 Проверь, что readiness probe проходит:
+
 ```bash
 kubectl -n <ns> describe pod <pod> | grep -A5 'Conditions'
 kubectl -n <ns> get pod <pod> -o jsonpath='{.status.containerStatuses[*].ready}'
@@ -147,6 +146,7 @@ patch.
 ## Шаг 3. Митигация vs root cause
 
 Спроси, что важнее сейчас:
+
 - **митигация** — быстро поднять (rollback, scale, ручной patch) → действуй после подтверждения
 - **root cause** — копать глубже → продолжай диагностику
 
