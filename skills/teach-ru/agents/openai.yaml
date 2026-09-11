@@ -1,0 +1,5 @@
+interface:
+  display_name: "Обучение"
+  short_description: "Осваивать тему в управляемом воркспейсе"
+policy:
+  allow_implicit_invocation: false
