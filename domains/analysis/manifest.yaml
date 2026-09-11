@@ -1,0 +1,17 @@
+# Анализ требований — артефакты от ценности до спецификаций: User Story, BRD,
+# модели процесса, backend-логика, ERD, OpenAPI, AsyncAPI, NFR, ИБ-ревью.
+# Скилл analysis-kit задаёт общий контракт, агенты по ролям работают поверх него.
+#
+# Не требует ничего от окружения. Валидаторы спецификаций (redocly, asyncapi,
+# plantuml) опциональны: без них команда проверки уходит пользователю, поэтому
+# в requires_bin они не объявлены.
+
+name: analysis
+description: Анализ требований — User Story, BRD, процессы, спецификации API и данных, ИБ-ревью.
+
+requires_env: []
+
+targets:
+  rules:  ${CLAUDE_HOME}/rules
+  skills: ${CLAUDE_HOME}/skills
+  agents: ${CLAUDE_HOME}/agents
