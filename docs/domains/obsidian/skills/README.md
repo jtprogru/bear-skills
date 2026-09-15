@@ -55,6 +55,7 @@
 | [`note-templates`](note-templates.md) | Выбор шаблона Templater и рецепт его вызова |
 | [`vault-archiving`](vault-archiving.md) | Перенос в `04. Архив/`: плоско, без удаления |
 | [`vault-mermaid`](vault-mermaid.md) | Init-строка `useMaxWidth` в mermaid-блоках |
+| [`vault-tasks`](vault-tasks.md) | Задачи на плагине Tasks: метка `#task`, разметка, парсер, недельный разбор |
 
 ## Точечная установка
 
@@ -81,6 +82,7 @@ bear-skills install skill:obsidian-ingest skill:obsidian-split-note skill:obsidi
 - Только inbox → `obsidian-inbox-review`, `obsidian-refactor-inbox`, `obsidian-enrich-note`, `vault-archiving`
 - Только граф/MOC → `obsidian-split-note`, `obsidian-untangle-knot`, `knowledge-structures`
 - Только критика → `obsidian-note-critic`, `obsidian-enrich-note`, `vault-stats`
+- Только задачи → `vault-tasks`, `obsidian-daily-append` + агент `obsidian-task-keeper`
 
 Подробнее с правилами — [partial.md → Сценарии](../../../installation/partial.md#сценарии).
 

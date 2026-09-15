@@ -25,6 +25,7 @@
 - **Доменные теги:** `#sre`, `#kubernetes`, `#observability`, `#golang`, `#psychology`, `#economics` и т.д.
 - **Статусы достоверности:** `#confidence/high`, `#confidence/low`
 - **Правила:** теги — только в frontmatter (не инлайново), иерархия через `/`
+- **Теги задач** — отдельное пространство, живут инлайново в строке задачи: обязательная метка `#task`, области `#area/work`, `#area/family`, `#area/self`, `#area/edu`, `#area/content`, `#area/community`, тип работы `#task/deep`, `#task/shallow`, `#task/admin`, `#task/15m`, `#task/someday`. Приоритет и ожидание тегами не размечаются — это эмодзи и статус Tasks
 
 ## Кто применяет
 
@@ -35,6 +36,7 @@
 - `obsidian-split-note`, `obsidian-refactor-lecture` — наследуют теги при выделении атомарок
 - `vault-archiving` — ставит `#archive` при переносе
 - `obsidian-enrich-note` — **не трогает теги** (там только aliases/up/down/other)
+- `vault-tasks`, `obsidian-task-keeper` — теги задач в строках-чекбоксах
 
 ## Точечная установка
 
@@ -52,4 +54,5 @@ bear-skills install rule:tags
 
 - Исходник: [`domains/obsidian/rules/tags.md`](../../../../domains/obsidian/rules/tags.md)
 - Навык [`vault-archiving`](../skills/vault-archiving.md) — что означает `#archive` на практике
+- Навык [`vault-tasks`](../skills/vault-tasks.md) — полные правила задач
 - [Обзор правил](README.md)

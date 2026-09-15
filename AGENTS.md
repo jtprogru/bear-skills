@@ -99,6 +99,7 @@ bear-skills/
 - `obsidian-note-critic` — критика заметки: похожие, противоположные, противоречия
 - `obsidian-daily-append` — добавление записи в сегодняшнюю ежедневную заметку
 - `obsidian-journal-review` — еженедельные/ежемесячные обзоры дневника
+- `vault-tasks` — задачи на плагине Tasks: метка `#task`, области, приоритеты, даты, грабли парсера, недельный разбор
 
 **Agents:**
 - `obsidian-inbox-triager` — разобрать `00. Входящие/`
@@ -106,6 +107,7 @@ bear-skills/
 - `obsidian-knowledge-cartographer` — здоровье графа (hub, split, MOC)
 - `obsidian-note-doctor` — поправить и/или покритиковать одну заметку
 - `obsidian-journal-keeper` — дневник, обзоры
+- `obsidian-task-keeper` — формулировка и разметка задач, разбор инбокса задач, ревизия долгожителей
 
 ### domain: git
 

@@ -16,8 +16,8 @@
 ## Состав
 
 - **[Правила](rules/README.md)** — 7 правил (структура vault, теги, frontmatter, стиль, именование, плотность)
-- **[Скиллы](skills/README.md)** — 18 скиллов (ингест, разбор inbox, untangle hub, дневник, механика хранилища)
-- **[Агенты](agents/README.md)** — 5 агентов (`obsidian-inbox-triager`, `obsidian-source-ingester` и др.)
+- **[Скиллы](skills/README.md)** — 19 скиллов (ингест, разбор inbox, untangle hub, дневник, задачи, механика хранилища)
+- **[Агенты](agents/README.md)** — 6 агентов (`obsidian-inbox-triager`, `obsidian-source-ingester`, `obsidian-task-keeper` и др.)
 
 ## Установка только этого домена
 

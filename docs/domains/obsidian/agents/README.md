@@ -13,6 +13,7 @@
 | [`obsidian-knowledge-cartographer`](obsidian-knowledge-cartographer.md) | Здоровье графа: MOC, hub, split | `obsidian-untangle-knot`, `obsidian-split-note` |
 | [`obsidian-note-doctor`](obsidian-note-doctor.md) | Качество одной заметки | `obsidian-enrich-note`, `obsidian-note-critic` |
 | [`obsidian-journal-keeper`](obsidian-journal-keeper.md) | Дневник | `obsidian-daily-append`, `obsidian-journal-review` |
+| [`obsidian-task-keeper`](obsidian-task-keeper.md) | Задачи: формулировка, разметка, разбор инбокса задач | `vault-tasks` |
 
 ## Зачем агенты, если есть скиллы
 
