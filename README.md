@@ -48,6 +48,7 @@ npx github:jtprogru/bear-skills install
 | **[`bear`](docs/domains/bear/README.md)** | — | Мета — справка по коллекции, диагностика установки, создание скилла, статистика. **4 скилла.** |
 | **[`analysis`](docs/domains/analysis/README.md)** | — | Анализ требований — User Story, BRD, процессы AS-IS/TO-BE, спецификации API и данных, ИБ-ревью. **1 скилл, 4 агента.** |
 | **[`teach`](docs/domains/teach/README.md)** | — | Обучение новой теме на русском — миссия, источники, HTML-уроки и записи усвоенного в рабочей директории. **1 скилл.** |
+| **[`telegram`](docs/domains/telegram/README.md)** | MCP-сервер `telegram` | Сводки чатов личного аккаунта Telegram через [telegram-mcp](https://github.com/jtprogru/telegram-mcp) — главное, договорённости, упоминания, кандидаты в задачи. **1 скилл.** |
 
 Требования проверяются на установке. Нет `BEAR_VAULT` — пропускается весь домен `obsidian`. Нет CLI `srekit` — пропускаются только скиллы `srekit*`, остальной SRE-домен ставится.
 

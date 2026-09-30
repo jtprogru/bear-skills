@@ -1,0 +1,17 @@
+# Telegram домен — скиллы поверх MCP-сервера telegram-mcp (личный аккаунт по MTProto).
+# Не требует env: секреты сервер берёт из Keychain сам. Глобально в ~/.claude/.
+#
+# Без подключённого MCP-сервера `telegram` скиллы домена бесполезны, но проверить
+# это на установке нельзя: сервер — не бинарь в PATH, а запись в конфиге Claude Code.
+# Поэтому зависимость описана в самих скиллах: первый шаг — `tg_me`.
+# Сервер: https://github.com/jtprogru/telegram-mcp
+
+name: telegram
+description: Telegram — сводки чатов личного аккаунта через telegram-mcp.
+
+requires_env: []
+
+targets:
+  rules:  ${CLAUDE_HOME}/rules
+  skills: ${CLAUDE_HOME}/skills
+  agents: ${CLAUDE_HOME}/agents
