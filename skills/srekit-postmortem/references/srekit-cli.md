@@ -85,7 +85,7 @@ tags:
 - Метаданные (Severity / Owner / Started / Resolved / Duration)
 - Секции: Summary, Impact, Timeline (таблица), Root Cause, Detection, Resolution, What went well/wrong, Where we got lucky, Action items (таблица), Lessons learned, References
 
-Кастомный шаблон может быть совсем другим (например, у h3llo — расширенная версия с Impact-таблицей, Why it took N minutes, Communications log, Follow-up через 30/90 дней).
+Кастомный шаблон может быть совсем другим (например, расширенная версия с Impact-таблицей, Why it took N minutes, Communications log, Follow-up через 30/90 дней).
 
 ## Связанные команды
 
