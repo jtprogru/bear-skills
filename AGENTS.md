@@ -116,6 +116,7 @@ bear-skills/
 - `git-pr-description` — описание PR из diff ветки против main
 - `git-release-tag` — semver-тег с changelog из коммитов (один пакет)
 - `git-monorepo-release` — состав релиза монорепо: кого бампить, какие теги ставить вместе, backport
+- `git-backlog-triage` — разбор открытых PR/MR и issues (GitHub/GitLab): что мержить, что ревьюить, мелкие фиксы против крупных задач; только чтение
 
 **Agents:**
 - `git-flow` — оркестратор GitHub Flow (ветка → коммиты → PR → тег)
