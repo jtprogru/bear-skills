@@ -10,3 +10,24 @@ targets:
   rules:  ${CLAUDE_HOME}/rules
   skills: ${CLAUDE_HOME}/skills
   agents: ${CLAUDE_HOME}/agents
+
+# Транзитивные зависимости; source paths преобразуют provider-адаптеры.
+dependencies:
+  agent:bear-reviewer:
+    - rule:agentops-auto-clarity
+  agent:bear-surgeon:
+    - rule:agentops-auto-clarity
+  agent:bear-locator:
+    - rule:agentops-auto-clarity
+  skill:agentops-canary:
+    - rule:agentops-auto-clarity
+  skill:agentops-brevity:
+    - rule:agentops-auto-clarity
+  skill:agentops-compress:
+    - rule:agentops-auto-clarity
+  skill:agentops-delegate:
+    - rule:agentops-auto-clarity
+
+requires_bin:
+  python3:
+    - skill:agentops-compress

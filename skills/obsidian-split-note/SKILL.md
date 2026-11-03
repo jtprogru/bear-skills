@@ -14,7 +14,7 @@ description: Разбивка большой заметки или конспе�
 - каждая новая заметка создаётся в правильной папке по PARA;
 - frontmatter оригинала и новых заметок согласованы (`up`/`down` проставлены).
 
-Базовые правила (PARA, теги, frontmatter, стиль, имена файлов) — в `../../rules/`. Особенно: `tags.md` (раздел «Структурные теги»), `note-types-frontmatter.md`, навык `/knowledge-structures` (атомарные заметки), `file-naming.md`.
+Базовые правила (PARA, теги, frontmatter, стиль, имена файлов) — в правилах домена `obsidian`. Особенно: `tags.md` (раздел «Структурные теги»), `note-types-frontmatter.md`, навык `/knowledge-structures` (атомарные заметки), `file-naming.md`.
 
 ---
 

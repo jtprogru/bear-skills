@@ -3,7 +3,7 @@
 
 # git-conventions
 
-Базовые конвенции для всех git-операций bear-skills. Скиллы домена `git` ссылаются на этот файл как `../rules/git-conventions.md`.
+Базовые конвенции для всех git-операций bear-skills. Скиллы домена `git` ссылаются на этот файл как `git-conventions.md`.
 
 ## Conventional Commits
 

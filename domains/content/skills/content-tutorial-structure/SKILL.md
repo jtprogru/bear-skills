@@ -13,9 +13,9 @@ description: >
 Цель: дать читателю **повторяемый** путь от исходного состояния к цели. Не теория, не эссе — пошаговая инструкция, где каждый шаг проверяем.
 
 Перед началом прочитай:
-- `~/.claude/rules/content-voice.md`
-- `~/.claude/rules/content-formatting.md` — раздел про туториалы
-- `~/.claude/rules/sre-runbook-template.md` — стиль исполняемых процедур (туториал близок к runbook'у по принципам команд)
+- `{{rule:content-voice}}`
+- `{{rule:content-formatting}}` — раздел про туториалы
+- `{{rule:sre-runbook-template}}` — стиль исполняемых процедур (туториал близок к runbook'у по принципам команд)
 
 ## Шаг 1. Определи scope
 

@@ -22,3 +22,25 @@ targets:
   rules:  ${CLAUDE_HOME}/rules
   skills: ${CLAUDE_HOME}/skills
   agents: ${CLAUDE_HOME}/agents
+
+# Транзитивные зависимости; source paths преобразуют provider-адаптеры.
+dependencies:
+  agent:sre-oncall-engineer:
+    - rule:sre-incident-severity
+    - rule:sre-runbook-template
+    - skill:sre-k8s-triage
+    - skill:srekit
+    - skill:srekit-postmortem
+    - skill:srekit-runbook
+  skill:srekit-postmortem:
+    - rule:sre-incident-severity
+    - rule:sre-runbook-template
+  skill:srekit:
+    - rule:sre-incident-severity
+    - rule:sre-runbook-template
+  skill:srekit-runbook:
+    - rule:sre-incident-severity
+    - rule:sre-runbook-template
+  skill:sre-k8s-triage:
+    - rule:sre-incident-severity
+    - rule:sre-runbook-template

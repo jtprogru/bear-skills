@@ -3,7 +3,7 @@
 #
 # Без подключённого MCP-сервера `telegram` скиллы домена бесполезны, но проверить
 # это на установке нельзя: сервер — не бинарь в PATH, а запись в конфиге Claude Code.
-# Поэтому зависимость описана в самих скиллах: первый шаг — `tg_me`.
+# requires_mcp фиксирует нужные инструменты; проверка сессии остаётся первым шагом скилла.
 # Сервер: https://github.com/jtprogru/telegram-mcp
 
 name: telegram
@@ -15,3 +15,20 @@ targets:
   rules:  ${CLAUDE_HOME}/rules
   skills: ${CLAUDE_HOME}/skills
   agents: ${CLAUDE_HOME}/agents
+
+# Транзитивные зависимости; source paths преобразуют provider-адаптеры.
+dependencies:
+  skill:telegram-chat-digest:
+    - rule:agentops-auto-clarity
+
+requires_mcp:
+  telegram:tg_me:
+    - skill:telegram-chat-digest
+  telegram:tg_dialogs:
+    - skill:telegram-chat-digest
+  telegram:tg_history:
+    - skill:telegram-chat-digest
+  telegram:tg_message:
+    - skill:telegram-chat-digest
+  telegram:tg_search:
+    - skill:telegram-chat-digest

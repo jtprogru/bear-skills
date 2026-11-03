@@ -17,7 +17,7 @@ description: "Рефакторинг конспектов лекций в Obsidi
 
 ## Базовые правила
 
-Структура хранилища, таксономия тегов, frontmatter, имена файлов — в `.agents/rules/`:
+Структура хранилища, таксономия тегов, frontmatter, имена файлов — в правилах домена `obsidian`:
 `vault-struct.md`, `tags.md` (раздел «Структурные теги»), `note-types-frontmatter.md`, `file-naming.md`.
 
 ---

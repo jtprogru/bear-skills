@@ -18,3 +18,236 @@ targets:
   rules:  ${BEAR_VAULT}/.agents/rules
   skills: ${CLAUDE_HOME}/skills
   agents: ${CLAUDE_HOME}/agents
+
+# Транзитивные зависимости; source paths преобразуют provider-адаптеры.
+dependencies:
+  agent:obsidian-knowledge-cartographer:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+    - skill:knowledge-structures
+    - skill:obsidian-refactor-lecture
+    - skill:obsidian-split-note
+    - skill:obsidian-untangle-knot
+    - skill:vault-mermaid
+  agent:obsidian-task-keeper:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+    - skill:obsidian-daily-append
+    - skill:vault-tasks
+  agent:obsidian-note-doctor:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+    - skill:obsidian-enrich-note
+    - skill:obsidian-note-critic
+  agent:obsidian-journal-keeper:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+    - skill:note-templates
+    - skill:obsidian-daily-append
+    - skill:obsidian-journal-review
+  agent:obsidian-inbox-triager:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+    - skill:obsidian-enrich-note
+    - skill:obsidian-inbox-review
+    - skill:obsidian-refactor-inbox
+    - skill:obsidian-split-note
+  agent:obsidian-source-ingester:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+    - skill:book-highlights-processor
+    - skill:knowledge-structures
+    - skill:obsidian-ingest
+    - skill:obsidian-refactor-lecture
+    - skill:vault-mermaid
+  skill:vault-archiving:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:vault-tasks:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-refactor-inbox:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-ingest:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-journal-review:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:book-highlights-processor:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:note-templates:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-inbox-review:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:knowledge-structures:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-enrich-note:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:vault-mermaid:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-split-note:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-note-critic:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-add-summary:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-emotion-log:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:vault-stats:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-refactor-lecture:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-untangle-knot:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+  skill:obsidian-daily-append:
+    - rule:content-style
+    - rule:file-naming
+    - rule:note-density
+    - rule:note-types-frontmatter
+    - rule:tags
+    - rule:vault-struct
+    - rule:workflows
+
+requires_mcp:
+  obsidian-hybrid-search:myvault_search:
+    - skill:obsidian-enrich-note
+    - skill:obsidian-note-critic
+
+requires_bin:
+  python3:
+    - skill:vault-stats

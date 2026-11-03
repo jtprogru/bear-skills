@@ -11,3 +11,22 @@ targets:
   rules:  ${CLAUDE_HOME}/rules
   skills: ${CLAUDE_HOME}/skills
   agents: ${CLAUDE_HOME}/agents
+
+# Транзитивные зависимости; source paths преобразуют provider-адаптеры.
+dependencies:
+  agent:git-flow:
+    - rule:git-conventions
+    - skill:git-conventional-commit
+    - skill:git-monorepo-release
+    - skill:git-pr-description
+    - skill:git-release-tag
+  skill:git-conventional-commit:
+    - rule:git-conventions
+  skill:git-monorepo-release:
+    - rule:git-conventions
+  skill:git-pr-description:
+    - rule:git-conventions
+  skill:git-release-tag:
+    - rule:git-conventions
+  skill:git-backlog-triage:
+    - rule:git-conventions

@@ -7,7 +7,7 @@ description: Анализ и ревью заметок из входящих (`0
 
 Только чтение и отчёт. Файлы не изменяются. Результат — структурированный список рекомендаций.
 
-Структура хранилища, теги и frontmatter — в `.agents/rules/` (`vault-struct.md`, `tags.md`, `note-types-frontmatter.md`).
+Структура хранилища, теги и frontmatter — в правилах домена `obsidian` (`vault-struct.md`, `tags.md`, `note-types-frontmatter.md`).
 
 **Триггеры:** «разбери входящие», «inbox review», «что у меня в инбоксе», «помоги с #review», «сделай ревью заметок».
 

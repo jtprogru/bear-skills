@@ -23,32 +23,18 @@ const HOME = os.homedir();
 const CLAUDE_HOME = process.env.CLAUDE_CONFIG_DIR || path.join(HOME, '.claude');
 const FLAG_PATH = path.join(CLAUDE_HOME, '.bear-active');
 
-// Контракт держим здесь, а не читаем из AGENTS.md: файл в репозитории может
-// уехать вместе с репозиторием, а хук должен работать и без него.
-const CONTRACT = `<bear-skills>
-Протокол работы: план → подтверждение → действие → отчёт. Необратимое действие
-(push, tag, delete, публикация, отправка) — только после явного «делай».
-
-Язык русский, технические термины английские. Обращение «ты» или безличное.
-
-Не выдумывай числа, имена и команды: не хватает данных — спроси. Не пиши
-«человеческая ошибка» как причину сбоя. Не теряй авторский голос.
-</bear-skills>`;
-
+// Единственный источник контракта общий для plugin и всех CLI-адаптеров.
 function detectDomains() {
-  const skillsDir = path.join(CLAUDE_HOME, 'skills');
-  const domains = new Set();
-  try {
-    for (const name of fs.readdirSync(skillsDir)) {
-      const m = name.match(/^(obsidian|git|sre|content|agentops|code|bear)-/);
-      if (m) domains.add(m[1]);
-      else if (name.startsWith('srekit')) domains.add('sre');
-      else if (name === 'book-highlights-processor') domains.add('obsidian');
-    }
-  } catch {
-    /* каталога нет — вернём пусто */
+  const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, 'catalog.json'), 'utf8'));
+  const inventoryPath = path.join(CLAUDE_HOME, '.bear-skills', 'installation.json');
+  if (fs.existsSync(inventoryPath)) {
+    const inventory = JSON.parse(fs.readFileSync(inventoryPath, 'utf8'));
+    return [...new Set(Object.values(inventory.components).map(c => c.domain))].sort();
   }
-  return [...domains].sort();
+  const root = process.env.CLAUDE_PLUGIN_ROOT || CLAUDE_HOME;
+  return [...new Set(Object.values(catalog).filter(c =>
+    fs.existsSync(path.join(root, c.kind + 's', c.name + (c.kind === 'skill' ? '' : '.md')))
+  ).map(c => c.domain))].sort();
 }
 
 function main() {
@@ -66,7 +52,7 @@ function main() {
   // где её нет, значит тратить токены на чужой проект.
   if (safeDomains.length === 0) return;
 
-  process.stdout.write(`${CONTRACT}\n`);
+  process.stdout.write(fs.readFileSync(path.join(__dirname, '..', 'runtime', 'contract.md'), 'utf8'));
 }
 
 try {

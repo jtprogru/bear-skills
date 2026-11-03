@@ -15,3 +15,14 @@ targets:
   rules:  ${CLAUDE_HOME}/rules
   skills: ${CLAUDE_HOME}/skills
   agents: ${CLAUDE_HOME}/agents
+
+# Транзитивные зависимости; source paths преобразуют provider-адаптеры.
+dependencies:
+  agent:system-analyst:
+    - skill:analysis-kit
+  agent:security-reviewer:
+    - skill:analysis-kit
+  agent:business-analyst:
+    - skill:analysis-kit
+  agent:product-owner:
+    - skill:analysis-kit

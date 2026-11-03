@@ -21,7 +21,9 @@ const path = require('path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const DOMAINS_DIR = path.join(REPO_ROOT, 'domains');
-const MIRROR_DIRS = ['skills', 'agents', 'rules'];
+const MIRROR_DIRS = ['skills', 'agents', 'rules', 'commands'];
+const { loadCatalog } = require('./lib/catalog');
+const { rewrite } = require('./lib/render');
 
 const BANNER_HTML =
   '<!-- СГЕНЕРИРОВАНО bin/mirror.js. Не редактировать: правки затрёт следующая генерация.\n' +
@@ -48,27 +50,9 @@ function listFiles(dir, ext) {
 }
 
 function collect() {
-  const out = { skills: [], agents: [], rules: [] };
-  for (const domain of listSubdirs(DOMAINS_DIR)) {
-    const base = path.join(DOMAINS_DIR, domain);
-    for (const name of listSubdirs(path.join(base, 'skills'))) {
-      out.skills.push({ domain, name, src: path.join(base, 'skills', name) });
-    }
-    for (const file of listFiles(path.join(base, 'agents'), '.md')) {
-      out.agents.push({
-        domain,
-        name: file.replace(/\.md$/, ''),
-        src: path.join(base, 'agents', file),
-      });
-    }
-    for (const file of listFiles(path.join(base, 'rules'), '.md')) {
-      out.rules.push({
-        domain,
-        name: file.replace(/\.md$/, ''),
-        src: path.join(base, 'rules', file),
-      });
-    }
-  }
+  const catalog = loadCatalog(REPO_ROOT);
+  const out = { skills: [], agents: [], rules: [], commands: [], catalog };
+  for (const c of catalog.components.values()) out[c.kind + 's'].push(c);
   return out;
 }
 
@@ -134,6 +118,7 @@ const isJunk = (entry) => JUNK_NAMES.has(entry.name) || entry.name.endsWith('.py
 // Собирает желаемое содержимое зеркала как Map относительный-путь → содержимое.
 function buildDesired(collected) {
   const files = new Map();
+  const rewriteRefs = (text, dst) => rewrite(text, path.join(REPO_ROOT, dst), collected.catalog, c => path.join(REPO_ROOT, c.kind + 's', c.name + (c.kind === 'skill' ? '' : '.md')));
 
   const addTree = (srcDir, dstPrefix, baseDepth) => {
     const walk = (dir, rel) => {
@@ -152,8 +137,8 @@ function buildDesired(collected) {
           const depth = baseDepth + relPath.split(path.sep).length - 1;
           const body =
             ext === '.md'
-              ? transform(raw.toString('utf8'), depth)
-              : rewriteRuleLinks(raw.toString('utf8'), depth);
+              ? transform(rewriteRefs(raw.toString('utf8'), dst), depth)
+              : rewriteRuleLinks(rewriteRefs(raw.toString('utf8'), dst), depth);
           files.set(dst, Buffer.from(body, 'utf8'));
         } else {
           files.set(dst, raw);
@@ -169,12 +154,17 @@ function buildDesired(collected) {
   }
   for (const a of collected.agents) {
     const raw = fs.readFileSync(a.src, 'utf8');
-    files.set(path.join('agents', `${a.name}.md`), Buffer.from(transform(raw, 1), 'utf8'));
+    files.set(path.join('agents', `${a.name}.md`), Buffer.from(transform(rewriteRefs(raw, path.join('agents', a.name + '.md')), 1), 'utf8'));
   }
   for (const r of collected.rules) {
     const raw = fs.readFileSync(r.src, 'utf8');
-    files.set(path.join('rules', `${r.name}.md`), Buffer.from(transform(raw, 1), 'utf8'));
+    files.set(path.join('rules', `${r.name}.md`), Buffer.from(transform(rewriteRefs(raw, path.join('rules', r.name + '.md')), 1), 'utf8'));
   }
+  for (const c of collected.commands) {
+    files.set(path.join('commands', c.name + '.md'), Buffer.from(transform(fs.readFileSync(c.src, 'utf8'), 1)));
+  }
+  // Plugin runtime uses the same catalog, never name-prefix inference.
+  files.set('hooks/catalog.json', Buffer.from(JSON.stringify(Object.fromEntries([...collected.catalog.components.values()].map(c => [c.id, { domain: c.domain, kind: c.kind, name: c.name }])), null, 2) + '\n'));
   return files;
 }
 
@@ -197,6 +187,7 @@ function listMirrorOnDisk() {
     };
     walk(base);
   }
+  if (fs.existsSync(path.join(REPO_ROOT, 'hooks/catalog.json'))) found.set('hooks/catalog.json', fs.readFileSync(path.join(REPO_ROOT, 'hooks/catalog.json')));
   return found;
 }
 

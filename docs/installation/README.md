@@ -1,83 +1,113 @@
 # Установка bear-skills
 
-`bear-skills` устанавливает компоненты четырёх доменов в нужные места — куда именно, объявляет сам домен в своём `manifest.yaml`.
-
-| Домен | требует | rules → | skills → | agents → |
-|-------|---------|---------|----------|----------|
-| `obsidian` | env `BEAR_VAULT` | `$BEAR_VAULT/.agents/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
-| `sre` | bin `srekit` — только для скиллов `srekit*` | `~/.claude/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
-| `git`, `content` | — | `~/.claude/rules/` | `~/.claude/skills/` | `~/.claude/agents/` |
-
-Установка работает симлинками: правишь в репо — изменения сразу видны в Claude Code и в Obsidian.
-
-Требования бывают двух видов и ведут себя по-разному:
-
-- **`requires_env`** — переменная окружения. Не задана (нет `BEAR_VAULT`) — домен скипается целиком с warning, остальные ставятся.
-- **`requires_bin`** — исполняемый файл в `PATH`. Если объявлен на уровне домена, ведёт себя как `requires_env`. Если объявлен под конкретные компоненты — скипаются только они. Нет CLI `srekit` → не поставятся `srekit`, `srekit-postmortem`, `srekit-runbook`, а `sre-k8s-triage`, правила и агент домена поставятся.
-
-Что именно требуется и выполнено ли это, показывает `bear-skills list`.
-
-## Какой способ установки выбрать
-
-| Способ | Когда выбрать | Подробнее |
-|--------|---------------|-----------|
-| **`npx`** | Без локального клона; разовая или редкая установка | [full.md](full.md#1-npx-рекомендуется) |
-| **Глобально через npm** | Часто запускаешь `bear-skills sync` | [full.md](full.md#2-глобально-через-npm) |
-| **Локально из клона** | Активно правишь скиллы/правила сам | [full.md](full.md#3-локально-из-клона-для-разработки) |
-| **Точечная** | Нужны только конкретные домены / скиллы / правила | [partial.md](partial.md) |
-
-## Предварительные шаги
-
-### 1. Решить, нужен ли obsidian-домен
-
-Если **да** — задай путь к Obsidian-хранилищу:
+Один каталог `domains/` используется для Claude Code, Codex, Cursor и OpenCode.
+По умолчанию сохранены `--provider claude-code --scope global --mode symlink`.
+Нужны Node.js ≥ 18 и git для загрузки source; локальный `--source` обходится без сети.
 
 ```bash
-# В ~/.zshrc или ~/.bashrc
-export BEAR_VAULT="$HOME/Obsidian/MyVault"
+# Проверка без записи файлов и git pull:
+node bin/cli.js install git --source . --provider codex \
+  --scope project --project /path/to/project --mode copy --dry-run
+
+# Установка того же набора:
+node bin/cli.js install git --source . --provider codex \
+  --scope project --project /path/to/project --mode copy
+
+node bin/cli.js doctor --provider codex --scope project --project /path/to/project
 ```
 
-Альтернатива — флаг `--vault <path>` в каждой команде (или `VAULT=...` для `make`).
+`--project` по умолчанию равен cwd и применяется только с project scope.
+`--home` изолирует все пользовательские пути для проверки.
+`--claude-home` сохранён как override native-root Claude Code;
+`--provider-home` — аналог для остальных провайдеров. У Codex skill-root остаётся
+`<home>/.agents/skills`; для изоляции всех путей используй именно `--home`.
 
-Если **нет** — пропускай шаг. `git`, `sre`, `content` поставятся без vault.
+## Пути
 
-### 2. Требования
+| Provider | Global skills | Project skills | Остальные компоненты |
+|---|---|---|---|
+| Claude Code | `~/.claude/skills` | `.claude/skills` | `agents/*.md`, `rules/*.md`, `commands/*.md`, `settings.json` |
+| Codex | `~/.agents/skills` | `.agents/skills` | `.codex/agents/*.toml` и `.codex/hooks.json` |
+| Cursor | `~/.cursor/skills` | `.cursor/skills` | `agents/*.md`, `rules/*.mdc`, `commands/*.md`, `hooks.json` |
+| OpenCode | `~/.config/opencode/skills` | `.opencode/skills` | `agents/*.md`, `commands/*.md`, `plugins/bear-skills.js` |
 
-- **Node.js ≥ 18** — для CLI и `npx`
-- **git** — для `npx` (клонирует репо в `~/.bear-skills/`)
-- **Claude Code** — чтобы скиллы и агенты заработали в нём после установки
+Global OpenCode учитывает `XDG_CONFIG_HOME`. У Codex и OpenCode правила хранятся
+в `<native-root>/.bear-skills/rules`; runtime подключает индекс через hooks/instructions.
+У Cursor global MDC подключается через hook-индекс, project MDC — native rules.
+Все ограничения: [сгенерированная таблица](../providers.md).
 
-### 3. Vault должен существовать (если ставишь obsidian)
+Для Obsidian нужен `--vault` или `BEAR_VAULT`. Только Claude global сохраняет старый
+путь правил `<vault>/.agents/rules`. Остальные адаптеры используют собственную область.
 
-CLI создаёт папку `<vault>/.agents/rules/`, но **сам vault** должен уже существовать. Если ты ещё не открыл его в Obsidian — открой и закрой один раз.
+## Выбор и зависимости
 
-## Команды CLI
+```bash
+bear-skills install git content --provider cursor --mode copy
+bear-skills install skill:git-conventional-commit --provider codex
+bear-skills install agent:git-flow --provider opencode --scope project
+bear-skills install command:bear --provider claude-code
+bear-skills list
+bear-skills providers --json
+```
 
-| Команда | Что делает |
-|---------|-----------|
-| `install` | Клонирует репо в `~/.bear-skills/` (если ещё нет), пуллит, ставит симлинки. Без аргументов — все домены, у которых выполнены требования. С именем домена — только этот. С `skill:/rule:/agent:` — точечно. |
-| `uninstall` | Снимает симлинки. Без аргументов — все. С именами — точечно. |
-| `sync` | `uninstall` + `git pull` + `install` |
-| `status` | Что и куда развёрнуто, по доменам |
-| `list` | Список всех доменов и компонентов |
-| `check` | Валидация манифестов и фронтматтера |
-| `lock-check` | Сверка локального `skills-lock.json` (он в `.gitignore`) с чужими скиллами на диске: изменились ли, не появилось ли неучтённых |
-| `help` | Справка |
+Точечная установка включает транзитивные правила и скиллы. Цикл или неизвестный ID —
+ошибка всего каталога. Отсутствие CLI/env или непереносимое ограничение пропускает
+компонент вместе с потребителями. Без `srekit` не устанавливается и требующий его
+`sre-oncall-engineer`; `sre-k8s-triage` остаётся доступен. Явный выбор недоступного
+компонента завершается ошибкой до записи.
 
-## Флаги
+MCP показывает три состояния: требуется, конфигурация найдена, сессия не проверена.
+Credentials и trust установщик не создаёт. Native hooks Codex нужно отдельно
+просмотреть и разрешить через `/hooks`. Project hooks зависят от доверия workspace.
 
-| Флаг | Дефолт | Назначение |
-|------|--------|-----------|
-| `--vault <path>` | env `BEAR_VAULT` | Путь к Obsidian vault. Нужен только если ставишь obsidian-домен. |
-| `--claude-home <path>` | `~/.claude` | Корень конфигурации Claude Code |
-| `--domains <list>` | — | Альтернативный способ выбора доменов (через запятую) |
-| `--source <path>` | `~/.bear-skills` | Локальный source вместо клонирования. Подразумевает `--no-clone` |
-| `--no-clone` | — | Не делать `git clone/pull`, использовать существующий source |
-| `--dry-run` | — | Показать действия, ничего не меняя |
-| `--skills-dir <path>` | из `skills-lock.json` | Каталог чужих скиллов для `lock-check` |
+## Copy, symlink и обновления
 
-## Что дальше
+Оба режима доставляют полный пакет: SKILL.md, references, scripts, assets и шаблоны.
+Symlink связывает только файлы без преобразований. Generated-файлы материализуются;
+после изменения исходника запускай `sync`.
 
-- [Полная установка](full.md) — три способа поставить всё
-- [Точечная установка](partial.md) — поставить домены или конкретные компоненты
-- [Решение проблем](troubleshooting.md) — частые ошибки
+```bash
+bear-skills sync --provider codex --scope project --project /path/to/project --source .
+bear-skills status --provider codex --scope project --project /path/to/project --json
+bear-skills uninstall --provider codex --scope project --project /path/to/project
+```
+
+`sync` без selectors обновляет корни из описи. `sync` сохраняет режим установленных компонентов; `--mode` явно меняет его. Удаление работает по описи без source,
+CLI-зависимостей и переменной vault. Изменённый компонент и его зависимости
+сохраняются с сообщением. Чужие настройки hook и посторонние файлы сохраняются.
+Опись и backups остаются для аудита.
+
+## Конфликты и миграция
+
+Весь набор проверяется до записи. `--dry-run` возвращает конфликты и ненулевой
+exit code, не делает clone/pull, mkdir или изменение config. Если локального
+source нет, dry-run просит указать его.
+
+```bash
+bear-skills migrate --provider claude-code --source . --dry-run
+bear-skills migrate --provider claude-code --source .
+bear-skills sync --provider claude-code --source .
+```
+
+Миграция принимает точные source-симлинки или перечисленные старой описью файлы с
+подтверждённым содержимым. Неоднозначные случаи — конфликты. Для изменений в файлах
+старой описи можно выбрать `migrate --overwrite`: исходники попадут в backup.
+Обычный `install --overwrite` также сохраняет заменяемые файлы в
+`.bear-skills/backups/<id>/` с `index.json`. Проверки безопасных путей не отключаются.
+
+## Совместимый копирующий entrypoint
+
+```bash
+node bin/install.js --only codex,cursor --dry-run
+node bin/install.js --only codex,cursor
+node bin/install.js --only codex,cursor --uninstall
+```
+
+Это обёртка общего ядра с default copy и обнаружением установленных провайдеров.
+Сохранены `--only`, `--all`, `--list`, `--uninstall`. `install.sh` передаёт работу ей;
+dry-run bootstrap требует существующий source и не скачивает репозиторий.
+Plugin Claude Code и плоское зеркало остаются отдельными каналами.
+Один компонент следует устанавливать одним каналом.
+
+См. [контракт адаптера и описи](../adapter-contract.md), [runtime](../runtime.md),
+[фактические проверки](../compatibility.md).

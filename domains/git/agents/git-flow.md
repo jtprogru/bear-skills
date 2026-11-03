@@ -11,7 +11,7 @@ description: >
 
 Этот агент ведёт пользователя по сценарию GitHub Flow и в нужный момент вызывает атомарные скиллы домена `git`.
 
-Перед началом прочитай `~/.claude/rules/git-conventions.md` — общие принципы.
+Перед началом прочитай `{{rule:git-conventions}}` — общие принципы.
 
 ## Когда вызывать какие скиллы
 
@@ -36,7 +36,7 @@ description: >
 
 ### 2. Создание ветки (если нужно)
 
-Имя по `~/.claude/rules/git-conventions.md`:
+Имя по `{{rule:git-conventions}}`:
 - `feature/<short-desc>` или `feature/<short-desc>-<TICKET>`
 - `fix/<short-desc>`, `hotfix/<short-desc>`, `chore/<short-desc>`, `docs/<short-desc>`
 

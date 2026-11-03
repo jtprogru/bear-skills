@@ -22,6 +22,16 @@ if [ "$node_major" -lt 18 ]; then
   die "нужен Node.js >= 18, найден $(node -v)"
 fi
 
+# Read-only modes never pull, clone or create directories.
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run|--dry-run=true|--list|--help|--uninstall)
+      [ -f "$SOURCE_DIR/bin/install.js" ] || die "нужен локальный source в $SOURCE_DIR; этот режим не клонирует репозиторий"
+      exec node "$SOURCE_DIR/bin/install.js" "$@"
+      ;;
+  esac
+done
+
 if [ -d "$SOURCE_DIR/.git" ]; then
   say "📥 Обновляю $SOURCE_DIR"
   git -C "$SOURCE_DIR" pull --ff-only || say "⚠️  git pull не удался, продолжаю с локальной копией"

@@ -50,11 +50,11 @@ For each `🎯` quote, output an Obsidian callout:
 
 If the quote has no `✍️` note, omit the last line.
 
-Never add commentary of your own — no summary line before the quote, no takeaway after it. The callout carries the source's words, the reader's note and nothing else; anything explaining the quote back to the reader is the filler `.agents/rules/note-density.md` forbids.
+Never add commentary of your own — no summary line before the quote, no takeaway after it. The callout carries the source's words, the reader's note and nothing else; anything explaining the quote back to the reader is the filler `{{rule:note-density}}` forbids.
 
 ## How to generate the title
 
-The title goes into the callout header and will likely become the filename of a future Obsidian atomic note. Naming style (claim-based, 4–8 words, language rules) — see `.agents/rules/file-naming.md`.
+The title goes into the callout header and will likely become the filename of a future Obsidian atomic note. Naming style (claim-based, 4–8 words, language rules) — see `{{rule:file-naming}}`.
 
 Draw on the `✍️` reader note as a signal of what *the reader* found important — that's the insight to encode in the title, not just a paraphrase of the raw quote.
 
@@ -75,7 +75,7 @@ Avoid highlighting entire sentences — pick the densest, most meaningful fragme
 
 ## Output structure
 
-Keep the frontmatter and the header block (book title, author, link) **as-is**, with two additions (see policies in `.agents/rules/note-types-frontmatter.md`):
+Keep the frontmatter and the header block (book title, author, link) **as-is**, with two additions (see policies in `{{rule:note-types-frontmatter}}`):
 
 - append `ai_generated: true`, because titles and highlights in the body are agent-generated;
 - if `summary` is missing or empty, fill it after processing all quotes: 1–3 sentences in Russian — the book's central claim as seen through its highlights. Plain text, no wikilinks or markdown. If a non-empty `summary` already exists, leave it untouched.

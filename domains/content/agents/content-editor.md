@@ -13,8 +13,8 @@ description: >
 Этот агент работает как внутренний редактор: помогает выбрать формат, вызывает нужный скилл, ведёт текст до состояния «можно публиковать».
 
 Перед началом прочитай:
-- `~/.claude/rules/content-voice.md`
-- `~/.claude/rules/content-formatting.md`
+- `{{rule:content-voice}}`
+- `{{rule:content-formatting}}`
 
 ## Шаг 1. Понять материал
 

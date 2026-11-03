@@ -8,6 +8,11 @@ const path = require('path');
 const os = require('os');
 const { execFileSync } = require('child_process');
 
+const { frontmatterDescription, triggerWords, parseManifestYaml, hasBin, loadDomain, loadAllDomains, listSubdirs, listFiles, listDomainComponents, readFrontmatter } = require('./lib/catalog');
+
+const installer = require('./lib/installer');
+const { migrate } = require('./lib/migrate');
+
 const PACKAGE_ROOT = path.resolve(__dirname, '..');
 const HOME = os.homedir();
 const REPO_URL = 'https://github.com/jtprogru/bear-skills.git';
@@ -28,9 +33,13 @@ function parseArgs(argv) {
       if (eq > -1) {
         key = a.slice(2, eq);
         val = a.slice(eq + 1);
+        if (['dry-run', 'no-clone', 'force', 'overwrite', 'json', 'help', 'list', 'all', 'uninstall'].includes(key)) {
+          if (!['true', 'false'].includes(val)) throw new Error('--' + key + ': ожидается true|false');
+          val = val === 'true';
+        }
       } else {
         key = a.slice(2);
-        const next = argv[i + 1];
+        const next = ['dry-run', 'no-clone', 'force', 'overwrite', 'json', 'help', 'list', 'all', 'uninstall'].includes(key) ? undefined : argv[i + 1];
         if (next !== undefined && !next.startsWith('--')) {
           val = next;
           i++;
@@ -80,6 +89,10 @@ function git(args, cwd) {
 }
 
 function ensureSource(source, opts) {
+  if (opts.dryRun) {
+    if (!fs.existsSync(source)) throw new Error(`Source ${source} отсутствует; dry-run не клонирует репозиторий. Укажи --source.`);
+    return;
+  }
   if (isGitRepo(source)) {
     if (opts.noClone) return;
     console.log(`📥 git pull в ${source}...`);
@@ -125,113 +138,10 @@ function ensureSource(source, opts) {
 //     rules:  <path-with-${vars}>
 //     skills: <path>
 //     agents: <path>
-function parseManifestYaml(text) {
-  const m = {
-    name: null,
-    description: null,
-    requires_env: [],
-    requires_bin: { domain: [], components: {} },
-    targets: {},
-  };
-  const lines = text.split('\n');
-  let section = null;
-  // Для requires_bin: имя бинаря, чей вложенный список компонентов сейчас читаем,
-  // и отступ его ключа — по нему отличаем `- item` домена от `- item` компонента.
-  let currentBin = null;
-  let currentBinIndent = 0;
 
-  for (let i = 0; i < lines.length; i++) {
-    const raw = lines[i];
-    const line = raw.replace(/#.*$/, '').trimEnd();
-    if (!line.trim()) continue;
-
-    // Top-level: key: value
-    const topMatch = line.match(/^([a-z_]+):\s*(.*)$/);
-    const isIndented = /^\s+/.test(raw);
-
-    if (!isIndented && topMatch) {
-      const [, k, v] = topMatch;
-      currentBin = null;
-      if (k === 'name') {
-        m.name = v.trim();
-        section = null;
-      } else if (k === 'description') {
-        m.description = v.trim();
-        section = null;
-      } else if (k === 'requires_env') {
-        section = 'requires_env';
-      } else if (k === 'requires_bin') {
-        section = 'requires_bin';
-      } else if (k === 'targets') {
-        section = 'targets';
-      } else {
-        section = null;
-      }
-      continue;
-    }
-
-    if (section === 'requires_env') {
-      const itemMatch = line.match(/^\s*-\s+(.+)$/);
-      if (itemMatch) m.requires_env.push(itemMatch[1].trim());
-    } else if (section === 'requires_bin') {
-      const indent = raw.match(/^\s*/)[0].length;
-      const itemMatch = line.match(/^\s*-\s+(.+)$/);
-      const keyMatch = line.match(/^\s*([A-Za-z0-9_.-]+):\s*$/);
-      if (keyMatch) {
-        currentBin = keyMatch[1];
-        currentBinIndent = indent;
-        if (!m.requires_bin.components[currentBin]) {
-          m.requires_bin.components[currentBin] = [];
-        }
-      } else if (itemMatch) {
-        // Элемент глубже ключа бинаря — его компонент; иначе доменный бинарь.
-        if (currentBin && indent > currentBinIndent) {
-          m.requires_bin.components[currentBin].push(itemMatch[1].trim());
-        } else {
-          currentBin = null;
-          m.requires_bin.domain.push(itemMatch[1].trim());
-        }
-      }
-    } else if (section === 'targets') {
-      const subMatch = line.match(/^\s+([a-z_]+):\s*(.+)$/);
-      if (subMatch) m.targets[subMatch[1]] = subMatch[2].trim();
-    }
-  }
-  if (!m.name) throw new Error('manifest: нет поля name');
-  if (!m.targets.rules && !m.targets.skills && !m.targets.agents) {
-    throw new Error(`manifest ${m.name}: ни одного targets.<rules|skills|agents>`);
-  }
-  for (const [bin, items] of Object.entries(m.requires_bin.components)) {
-    if (items.length === 0) {
-      throw new Error(
-        `manifest ${m.name}: requires_bin.${bin} объявлен, но список компонентов пуст`,
-      );
-    }
-    for (const it of items) {
-      if (!/^(skill|rule|agent):.+$/.test(it)) {
-        throw new Error(
-          `manifest ${m.name}: requires_bin.${bin} — "${it}" не в форме skill:/rule:/agent:<name>`,
-        );
-      }
-    }
-  }
-  return m;
-}
 
 // Есть ли исполняемый файл с таким именем в PATH.
-function hasBin(name) {
-  const dirs = (process.env.PATH || '').split(path.delimiter).filter(Boolean);
-  for (const dir of dirs) {
-    const candidate = path.join(dir, name);
-    try {
-      fs.accessSync(candidate, fs.constants.X_OK);
-      if (fs.statSync(candidate).isFile()) return true;
-    } catch {
-      /* следующий каталог */
-    }
-  }
-  return false;
-}
+
 
 // Подстановка ${VAR} из process.env + специальные переменные.
 function expandPath(p, env) {
@@ -241,34 +151,6 @@ function expandPath(p, env) {
     }
     return env[key];
   });
-}
-
-function loadDomain(domainDir) {
-  const manifestPath = path.join(domainDir, 'manifest.yaml');
-  if (!fs.existsSync(manifestPath)) return null;
-  const text = fs.readFileSync(manifestPath, 'utf8');
-  const m = parseManifestYaml(text);
-  return {
-    name: m.name,
-    description: m.description || '',
-    requires_env: m.requires_env || [],
-    requires_bin: m.requires_bin || { domain: [], components: {} },
-    targets: m.targets,
-    dir: domainDir,
-    rulesSrc: path.join(domainDir, 'rules'),
-    skillsSrc: path.join(domainDir, 'skills'),
-    agentsSrc: path.join(domainDir, 'agents'),
-  };
-}
-
-function loadAllDomains(source) {
-  const domainsDir = path.join(source, 'domains');
-  if (!fs.existsSync(domainsDir)) return [];
-  return fs
-    .readdirSync(domainsDir, { withFileTypes: true })
-    .filter((d) => d.isDirectory())
-    .map((d) => loadDomain(path.join(domainsDir, d.name)))
-    .filter(Boolean);
 }
 
 function resolveTargets(domain, opts) {
@@ -296,78 +178,9 @@ function resolveTargets(domain, opts) {
 // FS-операции
 // ─────────────────────────────────────────────────────────────────────────────
 
-function listSubdirs(dir) {
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir, { withFileTypes: true })
-    .filter((d) => d.isDirectory())
-    .map((d) => d.name);
-}
-
-function listFiles(dir, ext) {
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir, { withFileTypes: true })
-    .filter((d) => d.isFile() && (!ext || d.name.endsWith(ext)))
-    .map((d) => d.name);
-}
-
-function ensureDir(dir, dryRun) {
-  if (fs.existsSync(dir)) return;
-  if (dryRun) {
-    console.log(`  [dry] mkdir -p ${dir}`);
-    return;
-  }
-  fs.mkdirSync(dir, { recursive: true });
-}
-
-function linkOne(src, dst, dryRun) {
-  if (dryRun) {
-    console.log(`  [dry] ln -sfn ${src} ${dst}`);
-    return;
-  }
-  try {
-    const st = fs.lstatSync(dst);
-    if (st.isSymbolicLink() || st.isFile()) {
-      fs.unlinkSync(dst);
-    } else if (st.isDirectory()) {
-      fs.rmSync(dst, { recursive: true, force: true });
-    }
-  } catch (e) {
-    if (e.code !== 'ENOENT') throw e;
-  }
-  fs.symlinkSync(src, dst);
-}
-
-function unlinkSymlink(dst, dryRun) {
-  let st;
-  try {
-    st = fs.lstatSync(dst);
-  } catch {
-    return false;
-  }
-  if (!st.isSymbolicLink()) return false;
-  if (dryRun) {
-    console.log(`  [dry] rm ${dst}`);
-    return true;
-  }
-  fs.unlinkSync(dst);
-  return true;
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Каталог компонентов
 // ─────────────────────────────────────────────────────────────────────────────
-
-function listDomainComponents(domain) {
-  return {
-    rules: listFiles(domain.rulesSrc, '.md').map((f) => f.replace(/\.md$/, '')),
-    skills: listSubdirs(domain.skillsSrc),
-    agents: listFiles(domain.agentsSrc, '.md').map((f) =>
-      f.replace(/\.md$/, ''),
-    ),
-  };
-}
 
 // Компоненты домена, заблокированные отсутствующим бинарём.
 // Возвращает Map "skill:name" → имя недостающего бинаря.
@@ -470,300 +283,9 @@ function pickFromDomain(domain, selection, explicit) {
   return picked;
 }
 
-// Симлинк-установка (этот CLI) и копирующая (плагин Claude Code, npx skills add)
-// кладут скиллы в пересекающиеся места. Два канала разом дают дубли имён и
-// непредсказуемое срабатывание, поэтому предупреждаем, но не блокируем.
-function warnMixedInstall(opts) {
-  const pluginsDir = path.join(opts.claudeHome, 'plugins');
-  if (!fs.existsSync(pluginsDir)) return;
-  let hits = [];
-  const walk = (dir, depth) => {
-    if (depth > 4) return;
-    let entries;
-    try {
-      entries = fs.readdirSync(dir, { withFileTypes: true });
-    } catch {
-      return;
-    }
-    for (const e of entries) {
-      if (!e.isDirectory()) continue;
-      if (e.name === 'skills' && /bear-skills/.test(dir)) {
-        hits.push(path.join(dir, e.name));
-        continue;
-      }
-      walk(path.join(dir, e.name), depth + 1);
-    }
-  };
-  walk(pluginsDir, 0);
-  if (hits.length === 0) return;
-  console.log('');
-  console.log('⚠️  bear-skills установлен ДВУМЯ каналами одновременно:');
-  console.log(`   симлинки → ${path.join(opts.claudeHome, 'skills')}`);
-  for (const h of hits) console.log(`   копии    → ${h}`);
-  console.log('   Дубли имён делают срабатывание скиллов непредсказуемым.');
-  console.log('   Оставь один канал: сними симлинки (bear-skills uninstall)');
-  console.log('   либо удали плагин (claude plugin uninstall bear-skills).');
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Команды
 // ─────────────────────────────────────────────────────────────────────────────
-
-function cmdInstall(args) {
-  const opts = resolveOpts(args);
-  const source = resolveSource(args);
-  ensureSource(source, opts);
-  const domains = loadAllDomains(source);
-  if (domains.length === 0) {
-    throw new Error(`В ${source} нет доменов (папки domains/<name>/manifest.yaml)`);
-  }
-
-  const { selection, explicit } = parseSelection(args, domains);
-
-  // Валидация: явные имена должны где-то существовать
-  if (explicit) {
-    const allItems = new Set();
-    for (const d of domains) {
-      const c = listDomainComponents(d);
-      c.rules.forEach((n) => allItems.add(`rule:${n}`));
-      c.skills.forEach((n) => allItems.add(`skill:${n}`));
-      c.agents.forEach((n) => allItems.add(`agent:${n}`));
-    }
-    for (const it of selection.items) {
-      if (it.type) {
-        if (!allItems.has(`${it.type}:${it.name}`)) {
-          throw new Error(`Компонент ${it.type}:${it.name} не найден.`);
-        }
-      } else {
-        const candidates = ['skill', 'rule', 'agent'].filter((t) =>
-          allItems.has(`${t}:${it.name}`),
-        );
-        if (candidates.length === 0) {
-          throw new Error(
-            `Компонент "${it.name}" не найден. Запусти "bear-skills list".`,
-          );
-        }
-        if (candidates.length > 1) {
-          throw new Error(
-            `Имя "${it.name}" неоднозначно (${candidates.join(', ')}). Уточни префиксом.`,
-          );
-        }
-      }
-    }
-  }
-
-  let totalLinked = 0;
-  let skippedDomains = [];
-  let droppedComponents = [];
-
-  for (const d of domains) {
-    // если явный отбор и этот домен не задействован — пропускаем
-    if (explicit) {
-      const picked = pickFromDomain(d, selection, explicit);
-      if (
-        picked.rules.length === 0 &&
-        picked.skills.length === 0 &&
-        picked.agents.length === 0
-      ) {
-        continue;
-      }
-    }
-
-    const r = resolveTargets(d, opts);
-    if (r.error) {
-      skippedDomains.push({ name: d.name, reason: r.error });
-      continue;
-    }
-
-    const gate = applyBinGate(
-      pickFromDomain(d, selection, explicit),
-      blockedByMissingBin(d),
-    );
-    const picked = gate.picked;
-    droppedComponents.push(...gate.dropped.map((x) => ({ ...x, domain: d.name })));
-    console.log(`\n📦 ${d.name}`);
-    console.log(`   rules  → ${r.targets.rules || '—'}`);
-    console.log(`   skills → ${r.targets.skills || '—'}`);
-    console.log(`   agents → ${r.targets.agents || '—'}`);
-
-    if (picked.rules.length > 0 && r.targets.rules) {
-      ensureDir(r.targets.rules, opts.dryRun);
-      for (const n of picked.rules) {
-        const src = path.join(d.rulesSrc, `${n}.md`);
-        const dst = path.join(r.targets.rules, `${n}.md`);
-        linkOne(src, dst, opts.dryRun);
-        console.log(`   rule:  ${n}`);
-        totalLinked++;
-      }
-    }
-    if (picked.skills.length > 0 && r.targets.skills) {
-      ensureDir(r.targets.skills, opts.dryRun);
-      for (const n of picked.skills) {
-        const src = path.join(d.skillsSrc, n);
-        const dst = path.join(r.targets.skills, n);
-        linkOne(src, dst, opts.dryRun);
-        console.log(`   skill: ${n}`);
-        totalLinked++;
-      }
-    }
-    if (picked.agents.length > 0 && r.targets.agents) {
-      ensureDir(r.targets.agents, opts.dryRun);
-      for (const n of picked.agents) {
-        const src = path.join(d.agentsSrc, `${n}.md`);
-        const dst = path.join(r.targets.agents, `${n}.md`);
-        linkOne(src, dst, opts.dryRun);
-        console.log(`   agent: ${n}`);
-        totalLinked++;
-      }
-    }
-  }
-
-  console.log('');
-  if (skippedDomains.length > 0) {
-    console.log('⚠️  Пропущены домены:');
-    for (const s of skippedDomains) {
-      console.log(`   ${s.name}: ${s.reason}`);
-    }
-  }
-  if (droppedComponents.length > 0) {
-    console.log('⚠️  Пропущены компоненты (нет бинаря в PATH):');
-    for (const c of droppedComponents) {
-      console.log(`   [${c.domain}] ${c.key} — требует "${c.bin}"`);
-    }
-  }
-  console.log(`\n✅ Развёрнуто компонентов: ${totalLinked}`);
-  warnMixedInstall(opts);
-}
-
-function cmdUninstall(args) {
-  const opts = resolveOpts(args);
-  const source = resolveSource(args);
-  if (!fs.existsSync(source)) {
-    console.log(`Source ${source} не существует — сканирую цели на симлинки в bear-skills.`);
-    return cmdUninstallByScan(opts);
-  }
-  const domains = loadAllDomains(source);
-  const { selection, explicit } = parseSelection(args, domains);
-
-  let removed = 0;
-  for (const d of domains) {
-    const r = resolveTargets(d, opts);
-    if (r.error) continue;
-    const picked = pickFromDomain(d, selection, explicit);
-
-    for (const n of picked.rules) {
-      if (r.targets.rules) {
-        const dst = path.join(r.targets.rules, `${n}.md`);
-        if (unlinkSymlink(dst, opts.dryRun)) {
-          console.log(`  unlinked: ${dst}`);
-          removed++;
-        }
-      }
-    }
-    for (const n of picked.skills) {
-      if (r.targets.skills) {
-        const dst = path.join(r.targets.skills, n);
-        if (unlinkSymlink(dst, opts.dryRun)) {
-          console.log(`  unlinked: ${dst}`);
-          removed++;
-        }
-      }
-    }
-    for (const n of picked.agents) {
-      if (r.targets.agents) {
-        const dst = path.join(r.targets.agents, `${n}.md`);
-        if (unlinkSymlink(dst, opts.dryRun)) {
-          console.log(`  unlinked: ${dst}`);
-          removed++;
-        }
-      }
-    }
-  }
-  console.log(`✅ Снято симлинков: ${removed}`);
-}
-
-function cmdUninstallByScan(opts) {
-  const candidates = new Set();
-  if (opts.vault) {
-    candidates.add(path.join(opts.vault, '.agents', 'rules'));
-  }
-  candidates.add(path.join(opts.claudeHome, 'rules'));
-  candidates.add(path.join(opts.claudeHome, 'skills'));
-  candidates.add(path.join(opts.claudeHome, 'agents'));
-
-  let removed = 0;
-  for (const dir of candidates) {
-    if (!fs.existsSync(dir)) continue;
-    for (const name of fs.readdirSync(dir)) {
-      const dst = path.join(dir, name);
-      let target;
-      try {
-        const st = fs.lstatSync(dst);
-        if (!st.isSymbolicLink()) continue;
-        target = fs.readlinkSync(dst);
-      } catch {
-        continue;
-      }
-      if (target.includes('bear-skills')) {
-        if (unlinkSymlink(dst, opts.dryRun)) {
-          console.log(`  unlinked: ${dst}`);
-          removed++;
-        }
-      }
-    }
-  }
-  console.log(`✅ Снято симлинков: ${removed}`);
-}
-
-function cmdSync(args) {
-  cmdUninstall(args);
-  cmdInstall(args);
-}
-
-function cmdStatus(args) {
-  const opts = resolveOpts(args);
-  const source = resolveSource(args);
-  if (!fs.existsSync(source)) {
-    console.log(`Source ${source} не существует. Запусти "bear-skills install".`);
-    return;
-  }
-  const domains = loadAllDomains(source);
-  console.log(`📍 Source: ${source}`);
-  console.log(`📍 CLAUDE_HOME: ${opts.claudeHome}`);
-  console.log(`📍 BEAR_VAULT:  ${opts.vault || '(не задан)'}\n`);
-
-  for (const d of domains) {
-    const r = resolveTargets(d, opts);
-    if (r.error) {
-      console.log(`📦 ${d.name}  ⚠️  ${r.error}\n`);
-      continue;
-    }
-    const all = listDomainComponents(d);
-    const blocked = blockedByMissingBin(d);
-    console.log(`📦 ${d.name}`);
-    const checkCat = (label, names, dstBase, suffix, singular) => {
-      if (names.length === 0) return;
-      console.log(`  ${label} (${names.length}):`);
-      for (const n of names) {
-        const missingBin = blocked.get(`${singular}:${n}`);
-        if (missingBin) {
-          console.log(`    ⏭  ${n}  (нет бинаря "${missingBin}")`);
-          continue;
-        }
-        const dst = path.join(dstBase, n + (suffix || ''));
-        let ok = false;
-        try {
-          ok = fs.lstatSync(dst).isSymbolicLink();
-        } catch {}
-        console.log(`    ${ok ? '✅' : '❌'} ${n}`);
-      }
-    };
-    if (r.targets.rules) checkCat('rules', all.rules, r.targets.rules, '.md', 'rule');
-    if (r.targets.skills) checkCat('skills', all.skills, r.targets.skills, '', 'skill');
-    if (r.targets.agents) checkCat('agents', all.agents, r.targets.agents, '.md', 'agent');
-    console.log('');
-  }
-}
 
 function cmdList(args) {
   const source = resolveSource(args);
@@ -799,6 +321,10 @@ function cmdList(args) {
       console.log(`  skills (${all.skills.length}):`);
       for (const n of all.skills) console.log(`    skill:${n}`);
     }
+    if (all.commands.length) {
+      console.log(`  commands (${all.commands.length}):`);
+      for (const n of all.commands) console.log(`    command:${n}`);
+    }
     if (all.agents.length) {
       console.log(`  agents (${all.agents.length}):`);
       for (const n of all.agents) console.log(`    agent:${n}`);
@@ -807,30 +333,13 @@ function cmdList(args) {
   }
 }
 
-function readFrontmatter(filePath) {
-  const content = fs.readFileSync(filePath, 'utf8');
-  const lines = content.split('\n');
-  if (lines[0] !== '---') return { error: 'нет YAML-фронтматтера' };
-  let close = -1;
-  for (let i = 1; i < Math.min(lines.length, 40); i++) {
-    if (lines[i] === '---') {
-      close = i;
-      break;
-    }
-  }
-  if (close < 0) return { error: 'фронтматтер не закрыт' };
-  const fm = lines.slice(1, close).join('\n');
-  if (!/^name:/m.test(fm)) return { error: 'нет поля name' };
-  if (!/^description:/m.test(fm)) return { error: 'нет поля description' };
-  return { ok: true };
-}
-
 function cmdCheck(args) {
   const source = resolveSource(args);
   if (!fs.existsSync(source)) {
     console.error(`Source ${source} не существует`);
     process.exit(1);
   }
+  require('./lib/catalog').loadCatalog(source);
   const domains = loadAllDomains(source);
   let fail = 0;
 
@@ -970,197 +479,12 @@ function cmdLockCheck(args) {
 
 // Достаёт description из YAML-фронтматтера. Триггеры живут только там:
 // модель решает, звать скилл или нет, по описанию, а не по телу файла.
-function frontmatterDescription(text) {
-  const lines = text.split('\n');
-  if (lines[0] !== '---') return '';
-  let close = -1;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i] === '---') {
-      close = i;
-      break;
-    }
-  }
-  if (close < 0) return '';
-  const fm = lines.slice(1, close);
-  const start = fm.findIndex((l) => /^description:/.test(l));
-  if (start < 0) return '';
-  const out = [fm[start].replace(/^description:\s*[>|]?-?\s*/, '')];
-  for (let i = start + 1; i < fm.length; i++) {
-    if (/^\S/.test(fm[i])) break; // следующий ключ верхнего уровня
-    out.push(fm[i].trim());
-  }
-  return out.join(' ');
-}
+
 
 // Фразы, по которым скиллы конкурируют за срабатывание. Совпадение триггеров
 // в описаниях двух скиллов — главная причина, по которой вызывается не тот.
 // Берём только «ёлочки» из description: там автор перечисляет пусковые фразы.
-function triggerWords(description) {
-  const quoted = [...description.matchAll(/«([^»]{4,60})»/g)]
-    .map((m) => m[1].toLowerCase().trim())
-    // Одно короткое слово — не триггер, а шум вроде «плохо» или «хорошо».
-    .filter((s) => s.includes(' ') || s.length >= 8);
-  return new Set(quoted);
-}
 
-function cmdDoctor(args) {
-  const opts = resolveOpts(args);
-  const source = resolveSource(args);
-  const problems = [];
-  const warnings = [];
-
-  console.log(`📍 Source:      ${source}`);
-  console.log(`📍 CLAUDE_HOME: ${opts.claudeHome}`);
-  console.log(`📍 BEAR_VAULT:  ${opts.vault || '(не задан)'}\n`);
-
-  if (!fs.existsSync(source)) {
-    console.log(`❌ Source не существует. Запусти "bear-skills install".`);
-    process.exit(1);
-  }
-
-  const domains = loadAllDomains(source);
-  const ourSkills = new Map();
-  for (const d of domains) {
-    for (const n of listDomainComponents(d).skills) ourSkills.set(n, d.name);
-  }
-
-  // 1. Требования доменов
-  console.log('🔍 Требования доменов');
-  for (const d of domains) {
-    const r = resolveTargets(d, opts);
-    if (r.error) {
-      warnings.push(`домен ${d.name} не ставится: ${r.error}`);
-      console.log(`   ⚠️  ${d.name}: ${r.error}`);
-      continue;
-    }
-    const blocked = blockedByMissingBin(d);
-    if (blocked.size > 0) {
-      const bins = [...new Set(blocked.values())].join(', ');
-      warnings.push(`в домене ${d.name} пропущено ${blocked.size} компонент(ов): нет ${bins}`);
-      console.log(`   ⚠️  ${d.name}: ${blocked.size} компонент(ов) без бинаря ${bins}`);
-    } else {
-      console.log(`   ✅ ${d.name}`);
-    }
-  }
-
-  // 2. Битые симлинки
-  console.log('\n🔍 Битые симлинки');
-  const scanDirs = [
-    path.join(opts.claudeHome, 'skills'),
-    path.join(opts.claudeHome, 'agents'),
-    path.join(opts.claudeHome, 'rules'),
-  ];
-  if (opts.vault) scanDirs.push(path.join(opts.vault, '.agents', 'rules'));
-
-  let broken = 0;
-  for (const dir of scanDirs) {
-    if (!fs.existsSync(dir)) continue;
-    for (const name of fs.readdirSync(dir)) {
-      const p = path.join(dir, name);
-      try {
-        if (!fs.lstatSync(p).isSymbolicLink()) continue;
-        if (!fs.existsSync(p)) {
-          console.log(`   ❌ ${p} → ${fs.readlinkSync(p)}`);
-          problems.push(`битый симлинк: ${p}`);
-          broken++;
-        }
-      } catch {
-        /* нечитаемое пропускаем */
-      }
-    }
-  }
-  if (broken === 0) console.log('   ✅ битых нет');
-
-  // 3. Два канала установки разом
-  console.log('\n🔍 Каналы установки');
-  const skillsDir = path.join(opts.claudeHome, 'skills');
-  let symlinked = 0;
-  let copied = 0;
-  if (fs.existsSync(skillsDir)) {
-    for (const name of fs.readdirSync(skillsDir)) {
-      if (!ourSkills.has(name)) continue;
-      const p = path.join(skillsDir, name);
-      try {
-        if (fs.lstatSync(p).isSymbolicLink()) symlinked++;
-        else copied++;
-      } catch {
-        /* пропускаем */
-      }
-    }
-  }
-  if (symlinked > 0 && copied > 0) {
-    problems.push(`оба канала установки разом: ${symlinked} симлинков и ${copied} копий`);
-    console.log(`   ❌ симлинков ${symlinked}, копий ${copied} — оставь один канал`);
-  } else if (symlinked > 0) {
-    console.log(`   ✅ симлинки (${symlinked})`);
-  } else if (copied > 0) {
-    console.log(`   ✅ копии (${copied})`);
-  } else {
-    console.log('   ⚠️  ничего не установлено');
-    warnings.push('в CLAUDE_HOME нет ни одного скилла bear-skills');
-  }
-
-  // 4. Коллизии с чужими скиллами
-  console.log('\n🔍 Коллизии имён с чужими скиллами');
-  const lockPath = path.join(source, 'skills-lock.json');
-  let collisions = 0;
-  if (fs.existsSync(lockPath)) {
-    const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
-    for (const s of lock.skills) {
-      if (ourSkills.has(s.name)) {
-        console.log(`   ❌ ${s.name}: есть и у нас, и в lock (${s.source})`);
-        problems.push(`коллизия имени: ${s.name}`);
-        collisions++;
-      }
-    }
-  }
-  if (collisions === 0) console.log('   ✅ коллизий нет');
-
-  // 5. Пересекающиеся триггеры
-  console.log('\n🔍 Пересекающиеся триггеры');
-  const triggers = [];
-  for (const d of domains) {
-    for (const n of listDomainComponents(d).skills) {
-      const file = path.join(d.skillsSrc, n, 'SKILL.md');
-      try {
-        const text = fs.readFileSync(file, 'utf8');
-        triggers.push({ name: n, words: triggerWords(frontmatterDescription(text)) });
-      } catch {
-        /* пропускаем */
-      }
-    }
-  }
-  let overlaps = 0;
-  for (let i = 0; i < triggers.length; i++) {
-    for (let j = i + 1; j < triggers.length; j++) {
-      const shared = [...triggers[i].words].filter((w) => triggers[j].words.has(w));
-      if (shared.length > 0) {
-        console.log(
-          `   ⚠️  ${triggers[i].name} ↔ ${triggers[j].name}: «${shared.join('», «')}»`,
-        );
-        warnings.push(`общий триггер у ${triggers[i].name} и ${triggers[j].name}`);
-        overlaps++;
-      }
-    }
-  }
-  if (overlaps === 0) console.log('   ✅ дублей триггеров нет');
-
-  // Итог
-  console.log('');
-  if (problems.length === 0 && warnings.length === 0) {
-    console.log('✅ Проблем не найдено.');
-    return;
-  }
-  if (problems.length > 0) {
-    console.log(`❌ Проблем: ${problems.length}`);
-    for (const p of problems) console.log(`   ${p}`);
-  }
-  if (warnings.length > 0) {
-    console.log(`⚠️  Предупреждений: ${warnings.length}`);
-    for (const w of warnings) console.log(`   ${w}`);
-  }
-  if (problems.length > 0) process.exit(1);
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // stats — какие скиллы реально срабатывают
@@ -1170,6 +494,7 @@ function cmdDoctor(args) {
 // Мёртвый скилл — это либо неудачное описание, либо ненужный скилл;
 // и то и другое стоит увидеть.
 function cmdStats(args) {
+  if (args.flags.provider && !['claude', 'claude-code'].includes(args.flags.provider)) throw new Error('stats поддерживает только session logs Claude Code');
   const source = resolveSource(args);
   const projectsDir = args.flags['log-dir']
     ? path.resolve(String(args.flags['log-dir']))
@@ -1259,82 +584,81 @@ function cmdStats(args) {
 }
 
 function cmdHelp() {
-  const pkgPath = path.join(PACKAGE_ROOT, 'package.json');
-  let version = '?';
-  try {
-    version = JSON.parse(fs.readFileSync(pkgPath, 'utf8')).version || '?';
-  } catch {}
-  console.log(`bear-skills ${version} — мульти-доменная коллекция правил, скиллов и агентов для Claude Code
+  console.log(`bear-skills — Claude Code, Codex, Cursor, OpenCode
 
-Использование:
-  npx github:jtprogru/bear-skills <команда> [домены|компоненты...] [флаги]
-  bear-skills <команда> [домены|компоненты...] [флаги]   # если установлено глобально
+bear-skills <команда> [домены|skill:имя|rule:имя|agent:имя|command:имя] [флаги]
 
 Команды:
-  install     Клонирует репо в ~/.bear-skills (если ещё нет) и разворачивает симлинки.
-              Без аргументов — все домены, у которых выполнены requires_env.
-              С именем домена — только этот домен (целиком).
-              С компонентами skill:/rule:/agent: — точечно.
-  uninstall   Снимает симлинки. Без аргументов — все. С компонентами — точечно.
-  sync        uninstall + git pull + install
-  status      Показать, что и куда развёрнуто, по доменам
-  list        Список всех доменов и их компонентов
-  check       Валидация манифестов и фронтматтера
-  lock-check  Сверка skills-lock.json с чужими скиллами на диске
-  doctor      Диагностика установки: битые симлинки, два канала разом,
-              коллизии имён, пересекающиеся триггеры, требования доменов
-  stats       Какие скиллы реально срабатывают, а какие мертвы (по логам сессий)
-  help        Эта справка
+  install     Каталог → зависимости → файлы → конфликты → установка
+  sync        Обновить установленные компоненты; без uninstall
+  uninstall   Удалить по описи, сохранить пользовательские изменения
+  migrate     Принять подтверждённые legacy-файлы в опись; затем sync
+  providers   Возможности, обнаруженные установки, статус совместимости
+  status      Целостность файлов и отдельный статус загрузки провайдером
+  doctor      Зависимости, ссылки, ресурсы, дубли и состояние MCP
+  list        Каталог доменов и компонентов
+  check       Манифесты, frontmatter, зависимости и циклы
+  lock-check  Локальный skills-lock.json
+  stats       Статистика вызовов из логов Claude Code
 
-Домены (примеры; точный список — bear-skills list):
-  obsidian    PKB на Obsidian (требует BEAR_VAULT)
-  git         Git workflow, релизы
-  sre         SRE/Kubernetes — incident, runbooks, k8s-triage
-  content     Контент-pipeline — TG-посты, статьи, туториалы
+Выбор установки:
+  --provider <id>        claude-code (по умолчанию), codex, cursor, opencode
+  --scope global|project  По умолчанию global
+  --project <path>       Корень проекта; для project scope, по умолчанию cwd
+  --mode copy|symlink    По умолчанию symlink; преобразованные файлы материализуются
+  --source <path>        Локальный source; подразумевает --no-clone
+  --no-clone             Не клонировать и не обновлять source
+  --home <path>          Изолированный пользовательский корень для всех путей
+  --provider-home <path> Переопределить native config root в global scope
+  --claude-home <path>   Совместимый alias для Claude Code
+  --vault <path>         Obsidian vault, также BEAR_VAULT
+  --domains a,b          Дополнительный выбор доменов
+  --dry-run              Полностью без записи, mkdir, clone/pull
+  --overwrite            Заменить конфликтующие файлы с backup; пути проверяются всегда
+  --json                 Машинный отчёт для managed-команд
 
 Примеры:
-  # Полная установка всех доменов, где выполнены требования:
-  npx github:jtprogru/bear-skills install --vault "$HOME/Obsidian/MyVault"
+  bear-skills install git --provider codex --scope project --project ./app --mode copy
+  bear-skills migrate --provider claude-code --source . --dry-run
+  bear-skills sync --provider codex --scope project --project ./app --source .
 
-  # Только один домен:
-  npx github:jtprogru/bear-skills install git
-
-  # Несколько доменов:
-  npx github:jtprogru/bear-skills install obsidian git --vault "$HOME/Obsidian/MyVault"
-
-  # Точечная установка одного скилла:
-  npx github:jtprogru/bear-skills install skill:obsidian-ingest --vault ...
-
-  # Удалить домен целиком:
-  npx github:jtprogru/bear-skills uninstall sre
-
-Флаги:
-  --vault <path>         Путь к Obsidian vault. Может быть задан env BEAR_VAULT.
-  --claude-home <path>   Путь к ~/.claude (по умолчанию \$HOME/.claude)
-  --domains <list>       Альтернативный способ выбора доменов (через запятую)
-  --source <path>        Локальный source вместо ~/.bear-skills. Подразумевает --no-clone.
-  --no-clone             Не делать git clone/pull
-  --dry-run              Показать действия, ничего не меняя
-  --skills-dir <path>    Каталог чужих скиллов для lock-check
-
-Домены, у которых не выполнен requires_env, пропускаются с warning'ом —
-например, без BEAR_VAULT obsidian-домен скипнется, но git/sre/content поставятся.
-
-Аналогично requires_bin: бинарь, объявленный на уровне домена, пропускает
-домен целиком; объявленный под конкретные компоненты — пропускает только их.
-Без CLI srekit скиллы srekit-* скипнутся, а sre-k8s-triage поставится.
+Недоступная CLI/env-зависимость или несовместимость пропускает компонент и его
+потребителей с объяснением. Явная установка такого компонента завершается ошибкой.
+MCP config не доказывает доступность сессии. Hook trust выдаётся вручную в провайдере.
 `);
 }
 
+function runManaged(args) {
+  const options = installer.optionsFrom(args);
+  const command = args._[0];
+  if (command === 'install' || command === 'sync') {
+    if (command === 'sync' && !args.flags.source) {
+      const loc = require('./lib/providers').layout(options);
+      const state = require('./lib/storage').readInventory(loc, options);
+      if (state) options.source = state.source;
+    }
+    ensureSource(options.source, { dryRun: options.dryRun, noClone: !!args.flags['no-clone'] || !!args.flags.source });
+  }
+  const result = command === 'migrate' ? migrate(options)
+    : command === 'install' || command === 'sync' ? installer.install(options, command)
+    : command === 'uninstall' ? installer.uninstall(options)
+    : command === 'providers' ? installer.providers(options)
+    : installer.diagnostics(options, command === 'doctor');
+  if (result.failed) process.exitCode = 1;
+  return result;
+}
+
 const COMMANDS = {
-  install: cmdInstall,
-  uninstall: cmdUninstall,
-  sync: cmdSync,
-  status: cmdStatus,
+  install: runManaged,
+  uninstall: runManaged,
+  sync: runManaged,
+  status: runManaged,
+  providers: runManaged,
+  migrate: runManaged,
   list: cmdList,
   check: cmdCheck,
   'lock-check': cmdLockCheck,
-  doctor: cmdDoctor,
+  doctor: runManaged,
   stats: cmdStats,
   help: cmdHelp,
   '--help': cmdHelp,
@@ -1365,6 +689,7 @@ if (require.main === module) {
 // Экспорт для тестов: чистые функции разбора и отбора компонентов проверяются
 // напрямую, без развёртывания симлинков в файловую систему.
 module.exports = {
+  parseArgs, runManaged,
   parseManifestYaml,
   expandPath,
   hasBin,

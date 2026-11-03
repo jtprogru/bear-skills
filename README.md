@@ -1,6 +1,6 @@
 # bear-skills
 
-Мульти-доменная коллекция правил, скиллов и агентов для Claude Code. Личные инструменты для **Obsidian PKB**, **Git workflow**, **SRE/Kubernetes** и **контента**, упакованные в один npm-пакет.
+Мульти-доменная коллекция правил, скиллов и агентов для Claude Code, Codex, Cursor и OpenCode. Личные инструменты для **Obsidian PKB**, **Git workflow**, **SRE/Kubernetes** и **контента**, упакованные в один npm-пакет.
 
 📚 **Полная документация:** [`docs/`](docs/README.md)
 
@@ -10,7 +10,7 @@
 curl -fsSL https://raw.githubusercontent.com/jtprogru/bear-skills/main/install.sh | bash
 ```
 
-Скрипт найдёт установленные AI-агенты (Claude Code, Codex, Cursor, opencode) и разложит по ним скиллы. Дальше можно просто попросить агента «напиши постмортем» или «разбери входящие» — нужный скилл подхватится сам.
+Скрипт найдёт установленные AI-агенты (Claude Code, Codex, Cursor, opencode) и разложит по ним скиллы. После установки проверь загрузку компонентов и требования выбранного провайдера через `doctor`. Затем можно попросить агента «напиши постмортем» или «разбери входящие».
 
 ## Три способа установки
 
@@ -22,7 +22,7 @@ curl -fsSL https://raw.githubusercontent.com/jtprogru/bear-skills/main/install.s
 | **Плагин Claude Code** | если нужен только Claude Code | `claude plugin marketplace add jtprogru/bear-skills` |
 | **Копии** | на чужую машину или другой агент | `curl … \| bash` (см. выше) |
 
-Симлинк-канал ставит ссылки на репозиторий: правишь скилл — изменение видно сразу, без переустановки. Остальные два копируют файлы.
+Оба режима CLI доставляют полные пакеты скиллов. В symlink-режиме напрямую связываются только файлы без преобразований; generated-инструкции обновляются через `sync`. Копирующий entrypoint использует то же ядро и проверки владения.
 
 ```bash
 # Если нужен obsidian-домен — сначала путь к хранилищу:
@@ -35,22 +35,18 @@ npx github:jtprogru/bear-skills install
 
 Подробнее: [docs/installation/README.md](docs/installation/README.md).
 
-## Домены
+## Провайдеры и домены
 
-| Домен | требует | Что внутри |
-|-------|---------|-----------|
-| **[`obsidian`](docs/domains/obsidian/)** | env `BEAR_VAULT` | PKB на Obsidian по PARA — ингест, разбор inbox, untangle hub, ежедневник, задачи на плагине Tasks. **7 правил, 19 скиллов, 6 агентов.** |
-| **[`git`](docs/domains/git/README.md)** | — | Git workflow — Conventional Commits, описания PR, semver-релизы, релиз монорепо. **1 правило, 4 скилла, 1 агент.** |
-| **[`sre`](docs/domains/sre/README.md)** | bin `srekit` для части скиллов | SRE / Kubernetes — постмортемы и runbook'и через srekit, k8s-триаж. **2 правила, 4 скилла, 1 агент.** |
-| **[`content`](docs/domains/content/README.md)** | — | Контент — Telegram-посты, статьи, туториалы, очеловечивание. **2 правила, 4 скилла, 1 агент.** |
-| **[`agentops`](docs/domains/agentops/README.md)** | — | Гигиена работы с агентом — сжатие memory-файлов, канарейка контекста, делегирование, краткость. **1 правило, 4 скилла, 3 агента.** |
-| **[`code`](docs/domains/code/README.md)** | — | Допрос плана, состязательное ревью, построчные комментарии, последние 20%. **4 скилла.** |
-| **[`bear`](docs/domains/bear/README.md)** | — | Мета — справка по коллекции, диагностика установки, создание скилла, статистика. **4 скилла.** |
-| **[`analysis`](docs/domains/analysis/README.md)** | — | Анализ требований — User Story, BRD, процессы AS-IS/TO-BE, спецификации API и данных, ИБ-ревью. **1 скилл, 4 агента.** |
-| **[`teach`](docs/domains/teach/README.md)** | — | Обучение новой теме на русском — миссия, источники, HTML-уроки и записи усвоенного в рабочей директории. **1 скилл.** |
-| **[`telegram`](docs/domains/telegram/README.md)** | MCP-сервер `telegram` | Сводки чатов личного аккаунта Telegram через [telegram-mcp](https://github.com/jtprogru/telegram-mcp) — главное, договорённости, упоминания, кандидаты в задачи. **1 скилл.** |
+[Таблицы возможностей, состава и несовместимых компонентов](docs/providers.md) генерируются из каталога и адаптеров. [Фактические проверки](docs/compatibility.md) отделяют проверку файлов от live-загрузки инструментом.
 
-Требования проверяются на установке. Нет `BEAR_VAULT` — пропускается весь домен `obsidian`. Нет CLI `srekit` — пропускаются только скиллы `srekit*`, остальной SRE-домен ставится.
+```bash
+bear-skills providers
+bear-skills install git --provider codex --scope project --project ./app --mode copy
+bear-skills install skill:git-conventional-commit --provider cursor --dry-run
+bear-skills migrate --provider claude-code --source . --dry-run
+```
+
+Точечная установка включает зависимости. Отсутствие CLI/env или неподдерживаемое обязательное ограничение пропускает компонент и его потребителей с объяснением. Явный выбор недоступного компонента завершается ошибкой до записи.
 
 ## Структура репозитория
 
@@ -66,11 +62,11 @@ bear-skills/
 │   ├── sre/     {manifest, rules, skills, agents}
 │   └── content/ {manifest, rules, skills, agents}
 │
-├── skills/ agents/ rules/  # ← ЗЕРКАЛО, генерируется bin/mirror.js, не править
+├── skills/ agents/ rules/ commands/  # ← ЗЕРКАЛО, генерируется bin/mirror.js, не править
 ├── .claude-plugin/         # plugin.json + marketplace.json
 ├── bin/
-│   ├── cli.js              # симлинк-установка по доменам
-│   ├── install.js          # копирующая установка с детектом агентов
+│   ├── cli.js              # общее ядро установки + provider-адаптеры
+│   ├── install.js          # совместимая copy-обёртка общего ядра
 │   └── mirror.js           # генератор зеркала
 ├── tests/                  # node --test
 ├── docs/                   # Документация для человека → docs/README.md
@@ -81,7 +77,7 @@ bear-skills/
 └── Makefile
 ```
 
-Правится только `domains/`. Каталоги `skills/`, `agents/`, `rules/` в корне генерируются из него для плагина и `npx skills add`; CI проверяет, что они не разошлись.
+Правится только `domains/`. Каталоги `skills/`, `agents/`, `rules/`, `commands/` в корне генерируются из него для плагина и `npx skills add`; CI проверяет, что они не разошлись.
 
 ## Точечная установка
 
@@ -109,9 +105,9 @@ bear-skills list
 bear-skills help            # справка
 bear-skills install         # все домены, у которых выполнены требования
 bear-skills install <дом>   # один или несколько доменов
-bear-skills uninstall       # снять симлинки
-bear-skills sync            # git pull + relink
-bear-skills status          # что развёрнуто, по доменам
+bear-skills uninstall       # удалить по описи, сохраняя ручные правки
+bear-skills sync            # обновить принадлежащие установке файлы
+bear-skills status          # целостность файлов; загрузка провайдером отдельно
 bear-skills list            # дерево домен → компоненты
 bear-skills check           # валидация манифестов и фронтматтера
 bear-skills lock-check      # сверка локального skills-lock.json с чужими скиллами на диске
@@ -121,11 +117,11 @@ bear-skills stats           # какие скиллы реально сраба�
 
 ## Что ещё есть
 
-**[Runtime](docs/runtime.md)** — необязательный слой: `SessionStart`-хук инжектит общий контракт вместо повторения его в каждой сессии, statusline рисует бейдж, слэш-команды `/bear`, `/bear-doctor`, `/bear-stats`. Хук молча падает при любой ошибке и пишет symlink-safe — иначе ему нельзя доверять запуск сессии.
+**[Runtime](docs/runtime.md)** — адаптеры автоматически регистрируют native runtime: `SessionStart`-хук инжектит общий контракт вместо повторения его в каждой сессии, statusline рисует бейдж, слэш-команды `/bear`, `/bear-doctor`, `/bear-stats`. Общий контракт хранится в одном файле. Статус live-загрузки остаётся «не проверен» до отдельного запуска инструмента; installer не меняет trust.
 
 **[Evals](evals/README.md)** — трёхрукий прогон: `baseline` / `terse` / `skill`. Честная дельта считается против terse, а не против пустоты: половину эффекта любого скилла даёт обычная просьба отвечать кратко, и приписывать её скиллу нечестно. Токены берутся из `usage` ответа API — это замер, а не оценка.
 
-Флаги: `--vault <path>` (или env `BEAR_VAULT`), `--claude-home <path>`, `--dry-run`, `--source <path>`, `--no-clone`.
+Флаги: `--provider <id>`, `--scope global|project`, `--project <path>`, `--mode copy|symlink`, `--overwrite`, `--home <path>`, `--json`, `--vault <path>` (или env `BEAR_VAULT`), `--claude-home <path>`, `--dry-run`, `--source <path>`, `--no-clone`.
 
 ## Документация
 

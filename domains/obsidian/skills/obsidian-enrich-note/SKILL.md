@@ -7,7 +7,7 @@ description: "Обогащение frontmatter заметки — aliases, up, d
 
 Точечное обновление frontmatter **без перемещения файла и без изменения тегов**. Меняются только: `aliases`, `up`, `down`, `other`, `summary`. Тело заметки, теги, `links`, `sources` — не трогаем.
 
-Семантика полей `up`/`down`/`other`/`links` — в `.agents/rules/content-style.md`. Структура хранилища — в `.agents/rules/vault-struct.md`.
+Семантика полей `up`/`down`/`other`/`links` — в `{{rule:content-style}}`. Структура хранилища — в `{{rule:vault-struct}}`.
 
 ## Когда НЕ использовать
 

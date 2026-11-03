@@ -10,3 +10,32 @@ targets:
   rules:  ${CLAUDE_HOME}/rules
   skills: ${CLAUDE_HOME}/skills
   agents: ${CLAUDE_HOME}/agents
+
+# Транзитивные зависимости; source paths преобразуют provider-адаптеры.
+dependencies:
+  rule:content-formatting:
+    - rule:sre-runbook-template
+  agent:content-editor:
+    - rule:content-formatting
+    - rule:content-voice
+    - rule:narrative-structure
+    - skill:content-article-draft
+    - skill:content-tg-post
+    - skill:content-tutorial-structure
+  skill:content-tutorial-structure:
+    - rule:content-formatting
+    - rule:content-voice
+    - rule:narrative-structure
+    - rule:sre-runbook-template
+  skill:content-article-draft:
+    - rule:content-formatting
+    - rule:content-voice
+    - rule:narrative-structure
+  skill:content-tg-post:
+    - rule:content-formatting
+    - rule:content-voice
+    - rule:narrative-structure
+  skill:content-humanizer:
+    - rule:content-formatting
+    - rule:content-voice
+    - rule:narrative-structure

@@ -32,13 +32,13 @@ description: >
 
 ## Шаг 1. Собери данные
 
-Сборщик лежит в каталоге скилла, обычно `~/.claude/skills/git-backlog-triage/scripts/collect.py`:
+Сборщик лежит в каталоге скилла, обычно `./scripts/collect.py`:
 
 ```bash
-python3 -I ~/.claude/skills/git-backlog-triage/scripts/collect.py                       # репозиторий из origin текущего каталога
-python3 -I ~/.claude/skills/git-backlog-triage/scripts/collect.py --repo owner/name     # чужой репозиторий
-python3 -I ~/.claude/skills/git-backlog-triage/scripts/collect.py --repo https://gitlab.com/group/project
-python3 -I ~/.claude/skills/git-backlog-triage/scripts/collect.py --repo group/project --platform gitlab --hostname git.example.com
+python3 -I ./scripts/collect.py                       # репозиторий из origin текущего каталога
+python3 -I ./scripts/collect.py --repo owner/name     # чужой репозиторий
+python3 -I ./scripts/collect.py --repo https://gitlab.com/group/project
+python3 -I ./scripts/collect.py --repo group/project --platform gitlab --hostname git.example.com
 ```
 
 Он сам определяет платформу, через `gh`/`glab` выкачивает все страницы и сверяет число полученных элементов с общим счётчиком платформы. В stdout печатает шапку (права, методы merge, CI на дефолтной ветке, полнота) и по строке на каждый PR/MR и issue. Полный JSON с описаниями (до 1500 символов) пишет во временный файл и печатает путь. Описания читай оттуда точечно, а не целиком:

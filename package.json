@@ -1,7 +1,7 @@
 {
   "name": "bear-skills",
   "version": "0.5.0",
-  "description": "Мульти-доменная коллекция правил, скиллов и агентов для Claude Code: Obsidian PKB, Git workflow, SRE/Kubernetes, контент, гигиена работы с агентом, работа с кодом",
+  "description": "Мульти-доменная коллекция скиллов, правил и агентов для Claude Code, Codex, Cursor и OpenCode",
   "bin": {
     "bear-skills": "./bin/cli.js"
   },
@@ -18,7 +18,8 @@
     "AGENTS.md",
     "README.md",
     "LICENSE",
-    "Makefile"
+    "Makefile",
+    "runtime/"
   ],
   "engines": {
     "node": ">=18"
@@ -66,7 +67,9 @@
     "mirror": "node bin/mirror.js",
     "mirror:check": "node bin/mirror.js --check",
     "test": "node --test tests/*.test.js",
-    "evals": "node bin/evals.js"
+    "evals": "node bin/evals.js",
+    "providers:docs": "node bin/provider-docs.js",
+    "providers:check": "node bin/provider-docs.js --check"
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.60.0"

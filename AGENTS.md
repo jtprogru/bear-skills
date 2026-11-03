@@ -20,6 +20,7 @@ bear-skills/
 ```
 
 Каждый домен в `domains/<name>/` имеет свой `manifest.yaml`, который объявляет:
+
 - `name`, `description` — что это за домен
 - `requires_env` — переменные окружения, без которых домен не разворачивается (например, `BEAR_VAULT` для obsidian)
 - `targets` — куда уезжают rules/skills/agents после `install`
@@ -29,7 +30,7 @@ bear-skills/
 ## Текущие домены
 
 | Домен | requires_env | Что делает |
-|-------|-------------|-----------|
+| ------- | ------------- | ----------- |
 | `obsidian` | `BEAR_VAULT` | PKB на Obsidian по PARA — ингест, разбор inbox, untangle hub, ежедневник |
 | `git` | — | Git workflow — Conventional Commits, PR-описания, semver-релизы |
 | `sre` | — | SRE — incident postmortem, runbook authoring, Kubernetes triage |
@@ -40,6 +41,7 @@ bear-skills/
 ## Куда что разворачивается
 
 После `bear-skills install`:
+
 - `obsidian` rules → `$BEAR_VAULT/.agents/rules/` (vault-local, скиллы ссылаются как `.agents/rules/<file>.md`)
 - `git`, `sre`, `content` rules → `~/.claude/rules/` (глобально, скиллы ссылаются как `~/.claude/rules/<file>.md`)
 - все skills → `~/.claude/skills/`
@@ -77,6 +79,7 @@ bear-skills/
 ### Когда домен пересекается с другим
 
 Примеры пересечений:
+
 - **Постмортем (sre)** → попадает в **базу знаний (obsidian)**: пишем по `srekit-postmortem`, потом ингестим через `obsidian-ingest`.
 - **Релизные заметки (git-release-tag)** → могут стать **Telegram-постом (content-tg-post)** для канала.
 - **Туториал (content-tutorial-structure)** → может содержать **runbook-логику (sre-runbook-template)**.
@@ -88,6 +91,7 @@ bear-skills/
 ### domain: obsidian
 
 **Skills:**
+
 - `obsidian-inbox-review` — осмотр `00. Входящие/`, без изменений
 - `obsidian-refactor-inbox` — типизация → frontmatter → связи → PARA
 - `obsidian-enrich-note` — точечное обновление frontmatter одной заметки
@@ -102,6 +106,7 @@ bear-skills/
 - `vault-tasks` — задачи на плагине Tasks: метка `#task`, области, приоритеты, даты, грабли парсера, недельный разбор
 
 **Agents:**
+
 - `obsidian-inbox-triager` — разобрать `00. Входящие/`
 - `obsidian-source-ingester` — внешний источник в базу
 - `obsidian-knowledge-cartographer` — здоровье графа (hub, split, MOC)
@@ -112,6 +117,7 @@ bear-skills/
 ### domain: git
 
 **Skills:**
+
 - `git-conventional-commit` — commit-message по Conventional Commits для текущего diff
 - `git-pr-description` — описание PR из diff ветки против main
 - `git-release-tag` — semver-тег с changelog из коммитов (один пакет)
@@ -119,11 +125,13 @@ bear-skills/
 - `git-backlog-triage` — разбор открытых PR/MR и issues (GitHub/GitLab): что мержить, что ревьюить, мелкие фиксы против крупных задач; только чтение
 
 **Agents:**
+
 - `git-flow` — оркестратор GitHub Flow (ветка → коммиты → PR → тег)
 
 ### domain: sre
 
 **Skills:**
+
 - `sre-k8s-triage` — диагностика Pod/Deployment/Service от симптома к причине
 - `srekit-postmortem` — blameless-постмортем через CLI `srekit`
 - `srekit-runbook` — прескриптивный runbook через CLI `srekit`
@@ -132,17 +140,20 @@ bear-skills/
 Три `srekit*` требуют бинарь `srekit` в `PATH`. Если его нет — их не будет и в `~/.claude/skills/`; структуру документа бери из правила `sre-runbook-template`.
 
 **Agents:**
+
 - `sre-oncall-engineer` — оркестратор on-call реакции (алерт → митигация → resolved → постмортем)
 
 ### domain: content
 
 **Skills:**
+
 - `content-tg-post` — пост в Telegram (500-1500 символов, тезис первым)
 - `content-article-draft` — драфт статьи (Habr / Medium / личный блог)
 - `content-tutorial-structure` — скелет технического туториала
 - `content-humanizer` — очеловечивание русскоязычного AI-текста (только русский язык)
 
 **Agents:**
+
 - `content-editor` — редактор контент-pipeline от идеи до публикации
 
 ### domain: agentops
@@ -150,12 +161,14 @@ bear-skills/
 Гигиена работы с агентом: как тратить контекст и токены, а не что делать в предметной области.
 
 **Skills:**
+
 - `agentops-compress` — сжатие memory-файлов (`CLAUDE.md`, `AGENTS.md`, правила) со скриптовой проверкой сохранности якорей
 - `agentops-canary` — канарейка контекста и протокол выхода при деградации
 - `agentops-delegate` — что делегировать сабагенту, а что делать самому
 - `agentops-brevity` — режим сжатых ответов, три уровня
 
 **Agents:**
+
 - `bear-locator` (haiku) — read-only поиск позиций в коде, формат `path:line — symbol — note`
 - `bear-surgeon` — правка максимум в двух файлах, терминальные токены отказа
 - `bear-reviewer` (haiku) — находки одной строкой с уровнем серьёзности
@@ -165,6 +178,7 @@ bear-skills/
 ### domain: code
 
 **Skills:**
+
 - `code-grill` — калиброванный допрос плана до реализации, по одному вопросу
 - `code-senior-review` — ревью плана с контекстом проекта и проверкой актуальных практик
 - `code-review-line` — построчные находки к diff
@@ -173,6 +187,7 @@ bear-skills/
 ### domain: bear
 
 **Skills:**
+
 - `bear-help` — что есть в коллекции
 - `bear-doctor` — почему скилл не срабатывает
 - `bear-new-skill` — создание скилла по шаблону коллекции
@@ -185,9 +200,11 @@ bear-skills/
 Артефакты анализа требований от ценности до спецификаций. Лежат в `docs/analysis/<feature>/` текущего проекта, ID сквозные в пределах инициативы, пробелы помечаются `[GAP]`.
 
 **Skills:**
+
 - `analysis-kit` — контракт для всех четырёх агентов: каталог и имена файлов, владельцы артефактов, ID, формат ответа и «Передачи»; в `references/` шаблон и чеклист на каждый артефакт
 
 **Agents:**
+
 - `product-owner` — User Story и AC, приоритизация backlog, бизнес-кейс, роадмап, стейкхолдеры
 - `business-analyst` — процессы AS-IS/TO-BE, BRD, Use Case, Gap-анализ, RTM
 - `system-analyst` — backend-логика, ERD и DDL, Sequence, OpenAPI, AsyncAPI, NFR, ревью качества
@@ -198,6 +215,7 @@ bear-skills/
 ### domain: teach
 
 **Skills:**
+
 - `teach-ru` — обучение теме на русском в рабочей директории: миссия, источники, HTML-уроки, learning records. Запускается только командой `/teach-ru`, сам не срабатывает
 
 ### domain: telegram
@@ -205,6 +223,7 @@ bear-skills/
 Чтение личного аккаунта через MCP-сервер `telegram` (telegram-mcp). Скиллы домена ничего не отправляют и первым шагом проверяют сессию через `tg_me`.
 
 **Skills:**
+
 - `telegram-chat-digest` — сводка одного чата за период: главное, договорённости, упоминания автора, открытое, кандидаты в задачи `#task`; отчёт в чат, запись в хранилище только по решению автора
 
 ## Развёртывание

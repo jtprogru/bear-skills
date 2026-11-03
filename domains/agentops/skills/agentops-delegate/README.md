@@ -20,9 +20,9 @@
 
 ## Сабагенты домена
 
-- [`bear-locator`](../../agents/bear-locator.md) — read-only поиск, haiku, формат `path:line — symbol — note`
+- [`bear-locator`](../../agents/bear-locator.md) — read-only поиск, модель наследуется, формат `path:line — symbol — note`
 - [`bear-surgeon`](../../agents/bear-surgeon.md) — правка максимум в двух файлах, отказ терминальным токеном при выходе за границы
-- [`bear-reviewer`](../../agents/bear-reviewer.md) — находки одной строкой с уровнем серьёзности, haiku
+- [`bear-reviewer`](../../agents/bear-reviewer.md) — находки одной строкой с уровнем серьёзности, модель наследуется
 
 ## Границы
 

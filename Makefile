@@ -1,10 +1,9 @@
-# bear-skills — мульти-доменная коллекция правил, скиллов и агентов для Claude Code.
+# bear-skills — общий каталог и адаптеры AI-инструментов.
 #
 # Каждый домен в domains/<name>/ имеет свой manifest.yaml, описывающий
 # requires_env и куда ставить rules/skills/agents (см. domains/<name>/manifest.yaml).
 #
-# Развёртывание делается симлинками через bin/cli.js — правишь в репо, изменения
-# сразу видны в Claude Code.
+# Развёртывание: bin/cli.js; generated-файлы обновляются через sync.
 
 SHELL          := /bin/bash
 REPO_ROOT      := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
@@ -16,7 +15,19 @@ VAULT          ?= $(BEAR_VAULT)
 CLAUDE_HOME    ?= $(HOME)/.claude
 
 CLI            := node "$(REPO_ROOT)/bin/cli.js"
-CLI_OPTS       := --source "$(REPO_ROOT)" --no-clone --claude-home "$(CLAUDE_HOME)"
+PROVIDER       ?= claude-code
+SCOPE          ?= global
+MODE           ?= symlink
+PROJECT        ?=
+CLI_OPTS       := --source "$(REPO_ROOT)" --no-clone --provider "$(PROVIDER)" --scope "$(SCOPE)" --mode "$(MODE)"
+ifeq ($(SCOPE),global)
+ifeq ($(PROVIDER),claude-code)
+  CLI_OPTS += --claude-home "$(CLAUDE_HOME)"
+endif
+endif
+ifneq ($(PROJECT),)
+  CLI_OPTS += --project "$(PROJECT)"
+endif
 ifneq ($(VAULT),)
   CLI_OPTS     := $(CLI_OPTS) --vault "$(VAULT)"
 endif
@@ -28,8 +39,8 @@ help:
 	@echo ""
 	@echo "Полная установка:"
 	@echo "  install            Развернуть все домены, у которых выполнены requires_env"
-	@echo "  uninstall          Снять все симлинки"
-	@echo "  sync               Пересоздать (uninstall + install)"
+	@echo "  uninstall          Удалить по описи, сохранить ручные правки"
+	@echo "  sync               Обновить управляемые файлы"
 	@echo ""
 	@echo "Точечная установка:"
 	@echo '  install-one        ARGS="obsidian git" или ARGS="skill:obsidian-ingest"'
@@ -73,6 +84,7 @@ list:
 
 check:
 	@$(CLI) check --source "$(REPO_ROOT)" --no-clone
+	@node "$(REPO_ROOT)/bin/provider-docs.js" --check
 
 lock-check:
 	@$(CLI) lock-check --source "$(REPO_ROOT)" --no-clone

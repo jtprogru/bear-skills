@@ -3,7 +3,7 @@
 
 # sre-runbook-template
 
-Шаблон и принципы написания runbook'ов. Скиллы домена `sre` ссылаются как `../rules/sre-runbook-template.md`.
+Шаблон и принципы написания runbook'ов. Скиллы домена `sre` ссылаются как `sre-runbook-template.md`.
 
 ## Что такое runbook
 

@@ -13,8 +13,8 @@ description: >
 
 Перед началом прочитай:
 
-- `~/.claude/rules/content-voice.md`
-- `~/.claude/rules/content-formatting.md` — раздел про статьи
+- `{{rule:content-voice}}`
+- `{{rule:content-formatting}}` — раздел про статьи
 
 ## Шаг 1. Контекст
 

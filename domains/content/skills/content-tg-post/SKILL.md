@@ -9,8 +9,8 @@ description: Превращает идею, заметку или сырой т�
 
 Перед началом прочитай:
 
-- `~/.claude/rules/content-voice.md` — авторский голос (обращение «ты», не Wikipedia)
-- `~/.claude/rules/content-formatting.md` — раздел Telegram
+- `{{rule:content-voice}}` — авторский голос (обращение «ты», не Wikipedia)
+- `{{rule:content-formatting}}` — раздел Telegram
 
 ## Шаг 1. Пойми материал
 

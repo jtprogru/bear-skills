@@ -1,6 +1,6 @@
 # sre-incident-severity
 
-Шкала серьёзности инцидентов и контракт реакции. Скиллы домена `sre` ссылаются как `~/.claude/rules/sre-incident-severity.md`.
+Шкала серьёзности инцидентов и контракт реакции. Скиллы домена `sre` ссылаются как `{{rule:sre-incident-severity}}`.
 
 ## Шкала
 

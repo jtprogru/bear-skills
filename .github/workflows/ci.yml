@@ -8,12 +8,13 @@ on:
 
 jobs:
   test:
-    name: Тесты — Node ${{ matrix.node }}
-    runs-on: ubuntu-latest
+    name: Тесты — ${{ matrix.os }} / Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         node: ['18', '20', '22']
+        os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v5
 
@@ -26,6 +27,9 @@ jobs:
 
       - name: Зеркало не разошлось с domains/
         run: node bin/mirror.js --check
+
+      - name: Таблицы компонентов и адаптеров актуальны
+        run: node bin/provider-docs.js --check
 
       - name: Тесты
         run: node --test tests/*.test.js
@@ -45,8 +49,8 @@ jobs:
       - name: Симлинк-установка в изолированный HOME
         run: |
           node bin/cli.js install --source . --no-clone --claude-home "$RUNNER_TEMP/claude"
-          test -L "$RUNNER_TEMP/claude/skills/git-conventional-commit"
-          test -L "$RUNNER_TEMP/claude/agents/git-flow.md"
+          test -f "$RUNNER_TEMP/claude/skills/git-conventional-commit/SKILL.md"
+          test -f "$RUNNER_TEMP/claude/agents/git-flow.md"
 
       - name: Без BEAR_VAULT домен obsidian пропущен
         run: |
@@ -55,7 +59,7 @@ jobs:
       - name: Без CLI srekit скиллы srekit* пропущены, остальной sre поставлен
         run: |
           ! test -e "$RUNNER_TEMP/claude/skills/srekit"
-          test -L "$RUNNER_TEMP/claude/skills/sre-k8s-triage"
+          test -f "$RUNNER_TEMP/claude/skills/sre-k8s-triage/SKILL.md"
 
       - name: Снятие симлинков
         run: |

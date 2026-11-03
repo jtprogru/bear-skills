@@ -1,0 +1,402 @@
+{
+  "skill:agentops-brevity": {
+    "domain": "agentops",
+    "kind": "skill",
+    "name": "agentops-brevity"
+  },
+  "skill:agentops-canary": {
+    "domain": "agentops",
+    "kind": "skill",
+    "name": "agentops-canary"
+  },
+  "skill:agentops-compress": {
+    "domain": "agentops",
+    "kind": "skill",
+    "name": "agentops-compress"
+  },
+  "skill:agentops-delegate": {
+    "domain": "agentops",
+    "kind": "skill",
+    "name": "agentops-delegate"
+  },
+  "rule:agentops-auto-clarity": {
+    "domain": "agentops",
+    "kind": "rule",
+    "name": "agentops-auto-clarity"
+  },
+  "agent:bear-locator": {
+    "domain": "agentops",
+    "kind": "agent",
+    "name": "bear-locator"
+  },
+  "agent:bear-reviewer": {
+    "domain": "agentops",
+    "kind": "agent",
+    "name": "bear-reviewer"
+  },
+  "agent:bear-surgeon": {
+    "domain": "agentops",
+    "kind": "agent",
+    "name": "bear-surgeon"
+  },
+  "skill:analysis-kit": {
+    "domain": "analysis",
+    "kind": "skill",
+    "name": "analysis-kit"
+  },
+  "agent:business-analyst": {
+    "domain": "analysis",
+    "kind": "agent",
+    "name": "business-analyst"
+  },
+  "agent:product-owner": {
+    "domain": "analysis",
+    "kind": "agent",
+    "name": "product-owner"
+  },
+  "agent:security-reviewer": {
+    "domain": "analysis",
+    "kind": "agent",
+    "name": "security-reviewer"
+  },
+  "agent:system-analyst": {
+    "domain": "analysis",
+    "kind": "agent",
+    "name": "system-analyst"
+  },
+  "skill:bear-doctor": {
+    "domain": "bear",
+    "kind": "skill",
+    "name": "bear-doctor"
+  },
+  "skill:bear-help": {
+    "domain": "bear",
+    "kind": "skill",
+    "name": "bear-help"
+  },
+  "skill:bear-new-skill": {
+    "domain": "bear",
+    "kind": "skill",
+    "name": "bear-new-skill"
+  },
+  "skill:bear-stats": {
+    "domain": "bear",
+    "kind": "skill",
+    "name": "bear-stats"
+  },
+  "command:bear-doctor": {
+    "domain": "bear",
+    "kind": "command",
+    "name": "bear-doctor"
+  },
+  "command:bear-stats": {
+    "domain": "bear",
+    "kind": "command",
+    "name": "bear-stats"
+  },
+  "command:bear": {
+    "domain": "bear",
+    "kind": "command",
+    "name": "bear"
+  },
+  "skill:code-grill": {
+    "domain": "code",
+    "kind": "skill",
+    "name": "code-grill"
+  },
+  "skill:code-last-mile": {
+    "domain": "code",
+    "kind": "skill",
+    "name": "code-last-mile"
+  },
+  "skill:code-review-line": {
+    "domain": "code",
+    "kind": "skill",
+    "name": "code-review-line"
+  },
+  "skill:code-senior-review": {
+    "domain": "code",
+    "kind": "skill",
+    "name": "code-senior-review"
+  },
+  "skill:content-article-draft": {
+    "domain": "content",
+    "kind": "skill",
+    "name": "content-article-draft"
+  },
+  "skill:content-humanizer": {
+    "domain": "content",
+    "kind": "skill",
+    "name": "content-humanizer"
+  },
+  "skill:content-tg-post": {
+    "domain": "content",
+    "kind": "skill",
+    "name": "content-tg-post"
+  },
+  "skill:content-tutorial-structure": {
+    "domain": "content",
+    "kind": "skill",
+    "name": "content-tutorial-structure"
+  },
+  "rule:content-formatting": {
+    "domain": "content",
+    "kind": "rule",
+    "name": "content-formatting"
+  },
+  "rule:content-voice": {
+    "domain": "content",
+    "kind": "rule",
+    "name": "content-voice"
+  },
+  "rule:narrative-structure": {
+    "domain": "content",
+    "kind": "rule",
+    "name": "narrative-structure"
+  },
+  "agent:content-editor": {
+    "domain": "content",
+    "kind": "agent",
+    "name": "content-editor"
+  },
+  "skill:git-backlog-triage": {
+    "domain": "git",
+    "kind": "skill",
+    "name": "git-backlog-triage"
+  },
+  "skill:git-conventional-commit": {
+    "domain": "git",
+    "kind": "skill",
+    "name": "git-conventional-commit"
+  },
+  "skill:git-monorepo-release": {
+    "domain": "git",
+    "kind": "skill",
+    "name": "git-monorepo-release"
+  },
+  "skill:git-pr-description": {
+    "domain": "git",
+    "kind": "skill",
+    "name": "git-pr-description"
+  },
+  "skill:git-release-tag": {
+    "domain": "git",
+    "kind": "skill",
+    "name": "git-release-tag"
+  },
+  "rule:git-conventions": {
+    "domain": "git",
+    "kind": "rule",
+    "name": "git-conventions"
+  },
+  "agent:git-flow": {
+    "domain": "git",
+    "kind": "agent",
+    "name": "git-flow"
+  },
+  "skill:book-highlights-processor": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "book-highlights-processor"
+  },
+  "skill:knowledge-structures": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "knowledge-structures"
+  },
+  "skill:note-templates": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "note-templates"
+  },
+  "skill:obsidian-add-summary": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-add-summary"
+  },
+  "skill:obsidian-daily-append": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-daily-append"
+  },
+  "skill:obsidian-emotion-log": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-emotion-log"
+  },
+  "skill:obsidian-enrich-note": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-enrich-note"
+  },
+  "skill:obsidian-inbox-review": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-inbox-review"
+  },
+  "skill:obsidian-ingest": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-ingest"
+  },
+  "skill:obsidian-journal-review": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-journal-review"
+  },
+  "skill:obsidian-note-critic": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-note-critic"
+  },
+  "skill:obsidian-refactor-inbox": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-refactor-inbox"
+  },
+  "skill:obsidian-refactor-lecture": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-refactor-lecture"
+  },
+  "skill:obsidian-split-note": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-split-note"
+  },
+  "skill:obsidian-untangle-knot": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "obsidian-untangle-knot"
+  },
+  "skill:vault-archiving": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "vault-archiving"
+  },
+  "skill:vault-mermaid": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "vault-mermaid"
+  },
+  "skill:vault-stats": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "vault-stats"
+  },
+  "skill:vault-tasks": {
+    "domain": "obsidian",
+    "kind": "skill",
+    "name": "vault-tasks"
+  },
+  "rule:content-style": {
+    "domain": "obsidian",
+    "kind": "rule",
+    "name": "content-style"
+  },
+  "rule:file-naming": {
+    "domain": "obsidian",
+    "kind": "rule",
+    "name": "file-naming"
+  },
+  "rule:note-density": {
+    "domain": "obsidian",
+    "kind": "rule",
+    "name": "note-density"
+  },
+  "rule:note-types-frontmatter": {
+    "domain": "obsidian",
+    "kind": "rule",
+    "name": "note-types-frontmatter"
+  },
+  "rule:tags": {
+    "domain": "obsidian",
+    "kind": "rule",
+    "name": "tags"
+  },
+  "rule:vault-struct": {
+    "domain": "obsidian",
+    "kind": "rule",
+    "name": "vault-struct"
+  },
+  "rule:workflows": {
+    "domain": "obsidian",
+    "kind": "rule",
+    "name": "workflows"
+  },
+  "agent:obsidian-inbox-triager": {
+    "domain": "obsidian",
+    "kind": "agent",
+    "name": "obsidian-inbox-triager"
+  },
+  "agent:obsidian-journal-keeper": {
+    "domain": "obsidian",
+    "kind": "agent",
+    "name": "obsidian-journal-keeper"
+  },
+  "agent:obsidian-knowledge-cartographer": {
+    "domain": "obsidian",
+    "kind": "agent",
+    "name": "obsidian-knowledge-cartographer"
+  },
+  "agent:obsidian-note-doctor": {
+    "domain": "obsidian",
+    "kind": "agent",
+    "name": "obsidian-note-doctor"
+  },
+  "agent:obsidian-source-ingester": {
+    "domain": "obsidian",
+    "kind": "agent",
+    "name": "obsidian-source-ingester"
+  },
+  "agent:obsidian-task-keeper": {
+    "domain": "obsidian",
+    "kind": "agent",
+    "name": "obsidian-task-keeper"
+  },
+  "skill:sre-k8s-triage": {
+    "domain": "sre",
+    "kind": "skill",
+    "name": "sre-k8s-triage"
+  },
+  "skill:srekit": {
+    "domain": "sre",
+    "kind": "skill",
+    "name": "srekit"
+  },
+  "skill:srekit-postmortem": {
+    "domain": "sre",
+    "kind": "skill",
+    "name": "srekit-postmortem"
+  },
+  "skill:srekit-runbook": {
+    "domain": "sre",
+    "kind": "skill",
+    "name": "srekit-runbook"
+  },
+  "rule:sre-incident-severity": {
+    "domain": "sre",
+    "kind": "rule",
+    "name": "sre-incident-severity"
+  },
+  "rule:sre-runbook-template": {
+    "domain": "sre",
+    "kind": "rule",
+    "name": "sre-runbook-template"
+  },
+  "agent:sre-oncall-engineer": {
+    "domain": "sre",
+    "kind": "agent",
+    "name": "sre-oncall-engineer"
+  },
+  "skill:teach-ru": {
+    "domain": "teach",
+    "kind": "skill",
+    "name": "teach-ru"
+  },
+  "skill:telegram-chat-digest": {
+    "domain": "telegram",
+    "kind": "skill",
+    "name": "telegram-chat-digest"
+  }
+}

@@ -31,9 +31,9 @@
 
 ### Агенты
 
-- **`bear-locator`** (haiku, read-only) — находит позиции в коде, формат `path:line — symbol — note`, отказ `No match.`
+- **`bear-locator`** (read-only; модель наследуется) — находит позиции в коде, формат `path:line — symbol — note`, отказ `No match.`
 - **`bear-surgeon`** — правка максимум в двух файлах, терминальные токены отказа `too-big.` / `needs-confirm.` / `ambiguous.` / `regressed.`
-- **`bear-reviewer`** (haiku) — находки одной строкой с уровнем 🔴 bug / 🟡 risk / 🔵 nit / ❓ q
+- **`bear-reviewer`** (модель наследуется) — находки одной строкой с уровнем 🔴 bug / 🟡 risk / 🔵 nit / ❓ q
 
 ## Установка только этого домена
 

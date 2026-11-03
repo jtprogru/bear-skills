@@ -10,9 +10,9 @@ description: >
 
 # git-conventional-commit — Conventional Commit message для текущего diff
 
-Цель: вместо того чтобы пользователь сам формулировал commit-message, ты анализируешь diff и формируешь сообщение по конвенции `~/.claude/rules/git-conventions.md`.
+Цель: вместо того чтобы пользователь сам формулировал commit-message, ты анализируешь diff и формируешь сообщение по конвенции `{{rule:git-conventions}}`.
 
-Перед началом прочитай `~/.claude/rules/git-conventions.md` — там полный список допустимых `type`, формат scope и принципы.
+Перед началом прочитай `{{rule:git-conventions}}` — там полный список допустимых `type`, формат scope и принципы.
 
 ## Шаг 1. Собери контекст
 
