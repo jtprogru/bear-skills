@@ -14,13 +14,15 @@ curl -fsSL https://raw.githubusercontent.com/jtprogru/bear-skills/main/install.s
 
 ## Три способа установки
 
-Выбери **один**. Два канала разом кладут файлы в одно место и дают дубли — установщик об этом предупредит.
+Для каждого провайдера выбери **один канал установки**. Два канала разом кладут файлы в одно место и дают дубли — установщик об этом предупредит.
 
 | Способ | Кому | Команда |
 |---|---|---|
 | **Симлинки** | себе, если правишь скиллы | `npx github:jtprogru/bear-skills install` |
 | **Плагин Claude Code** | если нужен только Claude Code | `claude plugin marketplace add jtprogru/bear-skills` |
-| **Копии** | на чужую машину или другой агент | `curl … \| bash` (см. выше) |
+| **Копии** | для выбранного AI-инструмента, например Codex | `npx github:jtprogru/bear-skills install --provider codex --mode copy` |
+
+CLI без `--provider` устанавливает компоненты в Claude Code. Для Codex укажи `--provider codex`; bootstrap из быстрого старта автоматически выбирает обнаруженные инструменты.
 
 Оба режима CLI доставляют полные пакеты скиллов. В symlink-режиме напрямую связываются только файлы без преобразований; generated-инструкции обновляются через `sync`. Копирующий entrypoint использует то же ядро и проверки владения.
 
@@ -32,6 +34,36 @@ npx github:jtprogru/bear-skills install
 ```
 
 Домены, у которых не выполнены требования, пропускаются с предупреждением, а не роняют установку.
+
+### Установка в Codex
+
+Нужны Node.js ≥ 18 и git. Выбери область установки:
+
+```bash
+# Глобально — для всех проектов:
+npx github:jtprogru/bear-skills install --provider codex --scope global --mode copy
+
+# Только для уже существующего проекта:
+npx github:jtprogru/bear-skills install --provider codex \
+  --scope project --project /path/to/project --mode copy
+```
+
+При стандартных путях глобальные скиллы попадут в `~/.agents/skills/`, агенты — в `~/.codex/agents/`, hooks — в `~/.codex/hooks.json`. При проектной установке это `.agents/skills/`, `.codex/agents/` и `.codex/hooks.json` внутри указанного проекта.
+
+Если правишь скиллы в исходниках, замени `--mode copy` на `--mode symlink`. Для обновления запусти ту же команду с `sync` вместо `install`. Для Obsidian предварительно задай `BEAR_VAULT`, как в примере выше.
+
+Проверить установленный набор можно для той же области:
+
+```bash
+# Глобальная установка:
+npx github:jtprogru/bear-skills doctor --provider codex
+
+# Проектная установка:
+npx github:jtprogru/bear-skills doctor --provider codex \
+  --scope project --project /path/to/project
+```
+
+Hooks в Codex нужно просмотреть и разрешить через `/hooks`; для проектных hooks также требуется доверие к workspace. `doctor` проверяет файлы и зависимости, а фактическая загрузка компонентов Codex показывается отдельно.
 
 Подробнее: [docs/installation/README.md](docs/installation/README.md).
 
